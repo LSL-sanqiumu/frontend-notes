@@ -1,6 +1,6 @@
 #  Web-Page-Program
 
-## 品优购
+# 品优购
 
 favicon标签图标引入：放到网站根目录
 

@@ -369,6 +369,8 @@ inline-block——行内块元素：img、input、td，同时具有块元素和�
 - 如果只指定一个数值，那么这个数值一定是x坐标，另一个默认center。
 - 如果精确单位和方位名词混合使用，第一个一定是x坐标，第二个一定是y坐标。
 
+背景大小：background-size。
+
 背景固定：background-attachment：scroll（随内容滚动，默认）、fixed（背景固定）。
 
 ```css
@@ -380,6 +382,8 @@ background：red url() no-repeat scroll center center/400px 400px;
 ```
 
 css3，ie9+才支持：背景色半透明：`background-color：rgba(0, 0, 0, .8);`，a是alpha。
+
+
 
 ## CSS三大特性
 
@@ -930,9 +934,9 @@ table标签的一个属性——**border-collapse**，其属性值作用如下�
     }
 ```
 
-# 布局与规范
+# PC网页布局
 
-## 网页布局
+**基本布局模式：**
 
 页面布局的三大核心：盒子模型、浮动、定位；网页布局的本质就是用CSS摆放盒子（把盒子摆放到相应位置）。CSS提供了三种传统的布局方式（简单地说就是盒子的排列顺序是咋样的），实际开发中一个页面都包含这三种布局（移动端中还有新的布局方式）：
 
@@ -951,27 +955,21 @@ table标签的一个属性——**border-collapse**，其属性值作用如下�
    - 要遵守网页布局第一准则。
    - 如果一个元素浮动了，其余的兄弟元素也要浮动。
 
-**页面布局整体思路：**
+**页面布局整体思路：**（版心、上下、左右）
 
-1. 先确定页面版心（可视区、主体区域）。
-2. 再分析页面的上下布局，多个块级元素纵向排列找标准流，多个块级元素横向排列找浮动。
-3. 然后分析左右结构——列模块经常使用浮动布局，先确定列大小，再确定列位置（网页布局第二准则）。
+1. 确定页面版心（可视区、主体区域）。
+2. 分析页面的上下布局（行模块）。（多个块级元素纵向排列找标准流，多个块级元素横向排列找浮动）
+3. 然后分析左右结构（行模块的列模块）。（列模块经常使用浮动布局，先确定列大小，再确定列位置（网页布局第二准则））
 4. 遵循的逻辑：
    - 制作HTML结构（遵循先有结构，后有样式）。
    - 理清楚布局结构再写代码。
    - 总结：（**理清布局，自上向下、自左向右、由外而内，先结构后样式，一步步进行操作**）
 
-**网页布局过程：**（网页布局的核心就是用CSS摆放盒子）
-
-1. 准备好相关的网页标签，网页标签元素基本都是盒子Box。
-2. 然后利用CSS设置好盒子样式，摆放到合适位置。
-3. 再往盒子里面加内容进行调整。
-
 **导航栏：实际开发使用li+a的做法。**
 
 ![](image/nav.png)
 
-## CSS编写规范
+# CSS编写规范
 
 [CSS 代码的书写规范、顺序 | DeveWork](https://devework.com/css-written-specifications.html)（[CSS 代码的书写规范、顺序 - 云+社区 - 腾讯云 (tencent.com)](https://cloud.tencent.com/developer/article/1025155)）。
 
@@ -980,114 +978,6 @@ table标签的一个属性——**border-collapse**，其属性值作用如下�
 3. 文字-文本相关：font、line-height、letter-spacing、color、text-align等。
 4. 背景-背景边框：background、border等。
 5. 其他-其他操作：animation、transition等（动画、变换、背景渐变、阴影等）。
-
-# HTML5和CSS3入门
-
-## 初始化css模板
-
-```css
-* {
-    margin: 0;
-    padding: 0;
-}
-em,i {
-    font-style: normal;
-}
-li {
-    list-style: none;
-}
-img {
-    border: 0;
-    vertical-align: middle;
-}
-button {
-    cursor: pointer;
-}
-a {
-    color: #666;
-    text-decoration: none;
-}
-a:hover {
-    color: #c81623;
-}
-button,input {
-    font-family:Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
-    border: 0;
-    outline: none;
-}
-body{
-    -webkit-font-smoothing:antialiased;
-    background-color:#fff;
-    font:12px/1.5 Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
-	color:#666;
-}
-.hide,.none{
-    display:none;
-}
-.clearfix:after{
-    visibility:hidden;clear:both;display:block;content:".";height:0
-}
-.clearfix{
-    *zoom:1
-}
-```
-
-## HTML5新增
-
-### 新增语义化标签
-
-新增特性都有兼容性问题，IE9+才支持。HTML5新增语义化标签：header——头部标签、nav——导航标签、article——内容标签、section——定义文档某个区域、aside——侧边栏标签、footer——尾部标签。
-
-![](image/html5-tag.png)
-
-### 新增的多媒体标签
-
-视频：
-
-```html
- <video src="../../../learning_video/海蒂和爷爷.mp4" controls="controls"  width="" height="" preload="none" poster="static/img/leijun.png" muted="muted"></video>
-```
-
-![](image/video.png)
-
-音频：
-
-```html
-<audio src=""></audio>
-```
-
-![](image/audio.png)
-
-### 新增表单相关
-
-新增的input类型：
-
-| input类型     | 说明                |
-| ------------- | ------------------- |
-| type="email"  | 输入必须为email类型 |
-| type="url"    | 输入必须为URL类型   |
-| type="date"   | 输入必须为日期类型  |
-| type="time"   | 输入必须为时间类型  |
-| type="month"  | 输入必须为月类型    |
-| type="week"   | 输入必须为周类型    |
-| type="number" | 输入必须为数字类型  |
-| type="tel"    | 输入必须为手机号码  |
-| type="search" | 搜索框              |
-| type="color"  | 颜色选择表单        |
-
-新增表单属性：
-
-![](image/html5-form.png)
-
-## CSS3新增
-
-1. 新增选择器：属性选择器、结构伪类选择器、伪元素选择器。
-2. 盒子模型样式设置——`box-sizing`。
-3. filter属性：将模糊或颜色偏移等图形效果应用于元素上。（语法格式`filter: 函数();`，例如`filter: blur(5px);`blur是模糊处理函数）
-4. calc函数：在声明css属性时可通过该函数执行一些计算。（`width: clac(100% - 80px);`，可进行加减乘除运算）
-5. 过渡：从一个状态慢慢过渡到另外一个状态。（经常和`:hover`一起搭配使用）
-
-
 
 # 转换、过渡、动画
 
@@ -1217,6 +1107,112 @@ animation-timing-function（动画的速度曲线细节）：
 ## 栅格布局
 
 
+
+# HTML5和CSS3入门
+
+## 初始化css模板
+
+```css
+* {
+    margin: 0;
+    padding: 0;
+}
+em,i {
+    font-style: normal;
+}
+li {
+    list-style: none;
+}
+img {
+    border: 0;
+    vertical-align: middle;
+}
+button {
+    cursor: pointer;
+}
+a {
+    color: #666;
+    text-decoration: none;
+}
+a:hover {
+    color: #c81623;
+}
+button,input {
+    font-family:Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
+    border: 0;
+    outline: none;
+}
+body{
+    -webkit-font-smoothing:antialiased;
+    background-color:#fff;
+    font:12px/1.5 Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
+	color:#666;
+}
+.hide,.none{
+    display:none;
+}
+.clearfix:after{
+    visibility:hidden;clear:both;display:block;content:".";height:0
+}
+.clearfix{
+    *zoom:1
+}
+```
+
+## HTML5新增
+
+### 新增语义化标签
+
+新增特性都有兼容性问题，IE9+才支持。HTML5新增语义化标签：header——头部标签、nav——导航标签、article——内容标签、section——定义文档某个区域、aside——侧边栏标签、footer——尾部标签。
+
+![](image/html5-tag.png)
+
+### 新增的多媒体标签
+
+视频：
+
+```html
+ <video src="../../../learning_video/海蒂和爷爷.mp4" controls="controls"  width="" height="" preload="none" poster="static/img/leijun.png" muted="muted"></video>
+```
+
+![](image/video.png)
+
+音频：
+
+```html
+<audio src=""></audio>
+```
+
+![](image/audio.png)
+
+### 新增表单相关
+
+新增的input类型：
+
+| input类型     | 说明                |
+| ------------- | ------------------- |
+| type="email"  | 输入必须为email类型 |
+| type="url"    | 输入必须为URL类型   |
+| type="date"   | 输入必须为日期类型  |
+| type="time"   | 输入必须为时间类型  |
+| type="month"  | 输入必须为月类型    |
+| type="week"   | 输入必须为周类型    |
+| type="number" | 输入必须为数字类型  |
+| type="tel"    | 输入必须为手机号码  |
+| type="search" | 搜索框              |
+| type="color"  | 颜色选择表单        |
+
+新增表单属性：
+
+![](image/html5-form.png)
+
+## CSS3新增
+
+1. 新增选择器：属性选择器、结构伪类选择器、伪元素选择器。
+2. 盒子模型样式设置——`box-sizing`。
+3. filter属性：将模糊或颜色偏移等图形效果应用于元素上。（语法格式`filter: 函数();`，例如`filter: blur(5px);`blur是模糊处理函数）
+4. calc函数：在声明css属性时可通过该函数执行一些计算。（`width: clac(100% - 80px);`，可进行加减乘除运算）
+5. 过渡：从一个状态慢慢过渡到另外一个状态。（经常和`:hover`一起搭配使用）
 
 # 单移动端
 
@@ -1516,12 +1512,6 @@ bootstrap将页面划分为12列。
 ### 响应式工具
 
 ![](image/bootstrap_组件.png)
-
-# 实战
-
-
-
-
 
 # Emmet语法
 

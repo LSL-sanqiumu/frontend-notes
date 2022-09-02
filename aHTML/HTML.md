@@ -212,7 +212,7 @@ definition description，定义描述——定义列表具体内容
 </form>
 ```
 
-### input：
+### input标签：
 
 | 常用的type属性值 | 描述                                           |
 | :--------------: | :--------------------------------------------- |
@@ -239,7 +239,7 @@ definition description，定义描述——定义列表具体内容
 | checked   | check              | 规定此input首次加载时被选中                                  |
 | maxlength | 正整数             | 规定输入字符的最大长度                                       |
 
-### readonly与disabled：
+### readonly与disabled属性：
 
 ```html
 <form action="">
@@ -252,7 +252,7 @@ definition description，定义描述——定义列表具体内容
 
 
 
-### label:
+### label标签:
 
 label是input元素标记标签，用于绑定一个表单元素，当点击`<label>`标签内的文本时，浏览器就会自动将焦点（光标）转到或选择对应的表单元素，用来增加用户体验。
 
@@ -263,7 +263,7 @@ label是input元素标记标签，用于绑定一个表单元素，当点击`<la
 <input type="radio" name="sex"/>
 ```
 
-### select：
+### select标签：
 
 ```html
 <select name="" id="" multiple="multiple"> <!-- multiple="multiple" 表示支持多选 -->
@@ -276,7 +276,7 @@ label是input元素标记标签，用于绑定一个表单元素，当点击`<la
 </select>
 ```
 
-### textarea：
+### textarea标签：
 
 ```html
 <textarea cols="" rows="">
@@ -287,7 +287,7 @@ label是input元素标记标签，用于绑定一个表单元素，当点击`<la
 <!--实际开发都不会用-->
 ```
 
-## Document
+# Document
 
 百度
 

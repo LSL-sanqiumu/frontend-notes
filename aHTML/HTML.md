@@ -10,6 +10,8 @@ HTML 元素指的是从开始标签（start tag）到结束标签（end tag）�
 
 标签的语义——标签的含义。
 
+HTML元素标签分类：块级元素、行内块元素、行内元素。（内联元素、块元素）
+
 ## DOCTYPE
 
 ```html
@@ -79,14 +81,14 @@ div、span标签是没有语义的，可以将它们当作一个存放东西的�
 <!-- border：设置边框宽度等，后面用css操作-->
 ```
 
-| 属性   | 属性值 | 说明 |
-| ------ | ------ | ---- |
-| src    |        |      |
-| alt    |        |      |
-| title  |        |      |
-| width  |        |      |
-| height |        |      |
-| border |        |      |
+| 属性   | 属性值                           | 说明 |
+| ------ | -------------------------------- | ---- |
+| src    | 图片资源的地址（相对或绝对地址） |      |
+| alt    | 文本                             |      |
+| title  | 文本                             |      |
+| width  | 宽度值                           |      |
+| height | 高度值                           |      |
+| border | 边框                             |      |
 
 根目录：目录第一层称为该目录的根目录。
 
@@ -101,11 +103,11 @@ div、span标签是没有语义的，可以将它们当作一个存放东西的�
 a是anchor的缩写，意为锚。
 
 1. href：链接地址，内部链接或外部链接。（**空链接：**#来代替；**下载链接：**链接地址是文件，文件是.exe或.zip格式）
-2. target：_black-重新开一个窗口加载；_self：当前页跳转。
+2. target：`_black——重新开一个窗口加载；_self——当前页跳转`。
 3. 锚点链接：锚点链接的href属性值为`#idName`的形式idName为目标标签的id属性名，用于快速定位页面中某个位置。
 
 ```html
-<a href="" target=""></a>
+<a href="" target="" rel="nof"></a>
 <!-- 各种网页元素都可以加超链接-->
 ```
 
@@ -187,7 +189,7 @@ definition description，定义描述——定义列表具体内容
 |       cellspacing       | 像素值              | 单元格之间、外框与内框之间的空白，<br>默认的是2px |
 |          width          | 像素值或百分比      | 整个表格的宽度                                    |
 
-合并单元格：用于td标签
+合并单元格：（td标签属性）
 
 - `rowspan = "合并个数" `：跨行合并，不同tr中td的合并（如果使用tbody之类的，那么则是在这些标签内的tr才生效）。
 - `colspan = "合并个数"`：跨列合并，同一tr中的td的合并。
@@ -284,7 +286,7 @@ label是input元素标记标签，用于绑定一个表单元素，当点击`<la
 </textarea>
 <!--cols：一行的字数-->
 <!--rows：文本域默认展示的行数-->
-<!--实际开发都不会用-->
+<!-- 实际开发都不会用 -->
 ```
 
 # Document
@@ -294,3 +296,215 @@ label是input元素标记标签，用于绑定一个表单元素，当点击`<la
 [w3school 在线教程](https://www.w3school.com.cn/)
 
 [MDN Web Docs (mozilla.org)](https://developer.mozilla.org/zh-CN/)
+
+# 代码规范
+
+## 代码
+
+[代码规范 | Aotu.io - 前端代码规范](https://guide.aotu.io/docs/html/code.html)
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"> <!-- 设置HTML页面编码字符集，UTF-8为标准写法 -->
+    <title>Document</title>
+</head>
+<body>
+
+</body>
+</html>
+```
+
+HTML元素共有以下5种：
+
+- 空元素：area、base、br、col、command、embed、hr、img、input、keygen、link、meta、param、source、track、wbr
+- 原始文本元素：script、style
+- RCDATA元素：textarea、title
+- 外来元素：来自MathML命名空间和SVG命名空间的元素。
+- 常规元素：其他HTML允许的元素都称为常规元素。
+
+为了能让浏览器更好的解析代码以及能让代码具有更好的可读性，有如下约定：
+
+- 所有具有开始标签和结束标签的元素都要写上起止标签，某些允许省略开始标签或和束标签的元素亦都要写上。
+- **空元素标签都不加 “/” 字符。**
+
+**HTML标签名、类名、标签属性和大部分属性值统一用小写。**
+
+**不需要为 CSS、JS 指定类型属性（type属性），HTML5 中默认已包含**：
+
+```html
+<link rel="stylesheet" href="" >
+<script src=""></script>
+```
+
+**元素属性值能写上的都要写上。**
+
+**特殊字符要使用字符实体，例如不能直接使用>、<等。**
+
+**纯数字输入框使用 `type="tel"` 而不是 `type="number"`。**
+
+**块级元素都独立一行，内联元素可选。**
+
+## 注释
+
+**注释规范：**
+
+```html
+<!-- Comment Text -->    单行注释用于简单的描述，如某些状态描述、属性描述等，注释内容前后各一个空格字符，注释位于要注释代码的上面，单独占一行。
+模块注释——一般用于描述模块的名称以及模块开始与结束的位置，S表开始start，E表结束end
+<!-- S Comment Text A -->	
+<div class="mod_a">
+    <div class="mod_c">
+    	...
+    </div>
+    <!-- /mod_c -->  嵌套模块使用/而不是S、E
+    ...
+</div>
+<!-- E Comment Text A --> 模块与模块间间隔一行
+	
+<!-- S Comment Text B -->	
+<div class="mod_b">
+    ...
+</div>
+<!-- E Comment Text B -->
+```
+
+## 模板
+
+移动端：
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no" >
+<meta name="format-detection" content="telephone=no" >
+<title>移动端HTML模版</title>
+	
+<!-- S DNS预解析 -->
+<link rel="dns-prefetch" href="">
+<!-- E DNS预解析 --> 
+
+<!-- S 线上样式页面片，开发请直接取消注释引用 -->
+<!-- #include virtual="" -->
+<!-- E 线上样式页面片 -->
+
+<!-- S 本地调试，根据开发模式选择调试方式，请开发删除 --> 
+<link rel="stylesheet" href="css/index.css" >
+<!-- /本地调试方式 -->
+
+<link rel="stylesheet" href="http://srcPath/index.css" >
+<!-- /开发机调试方式 -->
+<!-- E 本地调试 -->
+
+</head>
+<body>
+
+</body>
+</html>
+```
+
+通用类设置
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1.0, 
+maximum-scale=1.0, user-scalable=no">
+```
+
+- width – viewport的宽度
+- height – viewport的高度
+- initial-scale – 初始的缩放比例
+- minimum-scale – 允许用户缩放到的最小比例
+- maximum-scale – 允许用户缩放到的最大比例
+- user-scalable – 是否允许用户缩放
+
+PC端：
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="keywords" content="your keywords">
+<meta name="description" content="your description">
+<meta name="author" content="author,email address">
+<meta name="robots" content="index,follow">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="renderer" content="ie-stand">
+<title>PC端HTML模版</title>
+
+<!-- S DNS预解析 --> 
+<link rel="dns-prefetch" href="">
+<!-- E DNS预解析 --> 
+
+<!-- S 线上样式页面片，开发请直接取消注释引用 -->
+<!-- #include virtual="" -->
+<!-- E 线上样式页面片 -->
+
+<!-- S 本地调试，根据开发模式选择调试方式，请开发删除 --> 
+<link rel="stylesheet" href="css/index.css" >
+<!-- /本地调试方式 -->
+
+<link rel="stylesheet" href="http://srcPath/index.css" >
+<!-- /开发机调试方式 -->
+<!-- E 本地调试 -->
+
+</head>
+<body>
+
+</body>
+</html>
+```
+
+## 图片
+
+内容图：颜色较为丰富，文件体积较大，优先考虑JPEG，有条件的话则优先考虑WebP格式的。
+
+背景图：（背景图多为图标等颜色比较简单、文件体积不大、起修饰作用的图片），一般都用png，如果色彩丰富、文件较大（40-200KB）则优先考虑使用JPEG格式的图片，如果可以使用WebP代替JPEG、png则优先使用WebP。
+
+图片大小：PC平台单张的图片的大小不应大于 200KB。移动平台单张的图片的大小不应大于 100KB。
+
+图片质量：
+
+- 上线的图片都应该经过压缩处理，压缩后的图片不应该出现肉眼可感知的失真区域。
+- 60质量的JPEG格式图片与质量大于60的相比，肉眼已看不出明显的区别，因此保存 JPEG 图的时候，质量一般控制在60，若保真度要求高的图片可适量提高到 80，图片大小控制在 200KB 以内。
+
+图片引入：测试内容图应该写上表明图片尺寸的占位图，可以用线上占位图生成服务，如：
+
+```
+http://placeholder.qiniudn.com/300x200
+```
+
+```html
+<img src="" alt="" >   不需要添加 width、height 属性，alt 属性应该写上
+.test {
+    background-image: url(icon.png);  CSS 中图片引入不需要引号
+}
+```
+
+CSS Sprites：
+
+- 适合使用频率高更新频率低的小图标
+- 尽量不留太多的空白
+- 体积较大的图片不合并
+- 确保要合并的小图坐标数值和合并后的 Sprites 图尺寸均为偶数
+
+Data URIs（base64编码）：
+
+- 适合更新频率高的小图片，如某些具备自定义功能的标题icon等
+- 转换成 Base64 编码的图片应小于 2KB
+- 移动端不使用 Base64 编码
+- 要兼容 IE6/IE7 的不使用
+
+
+
+
+
+
+
+
+
+
+

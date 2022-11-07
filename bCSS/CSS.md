@@ -5,7 +5,9 @@
 外部样式：
 
 ```html
-<link rel="stylesheet" type="text/css" href="" media="all" />
+<link rel="stylesheet" type="text/css" href="" media="all" />  
+<!-- 规范： 不要为css引入指定type，且不要用/来闭合标签-->
+<link rel="stylesheet" href="" media="all" >  
 ```
 
 内部样式：head标签内的style标签里的css样式。
@@ -22,6 +24,13 @@
 ### 标签选择器
 
 以HTML标签作为选择器——元素选择器。
+
+```html
+<h1>good luck</h1>
+h1 {
+	color: red;
+}
+```
 
 ### 类选择器
 
@@ -187,7 +196,7 @@ h2 ~ p {
 
 ### 伪类选择器
 
-伪类的效果是把某种幽灵类应用到伪类依附的元素上，**它为所依附的元素设定某种幽灵类**。
+伪类的效果是把某种幽灵类应用到伪类依附的元素上，**它为所依附的元素设定某种幽灵类**。举例如下：
 
 ```html
 p:first-child {......} <!-- 为依附的p设定幽灵类 -->
@@ -239,7 +248,23 @@ a:visited:hover {
 | **:hover**   | 鼠标指针放置其上的元素<br>例如鼠标悬停于超链接上             |
 | **:active**  | 由用户输入而激活的元素<br>例如用户单击超链接时按下鼠标的那段时间 |
 
-**UI状态伪类：**P90-P96
+**UI状态伪类：**根据用户界面元素（多是表单元素）的当前状态引用样式
+
+| 用户界面（user-interface）状态伪类 | 说明                                       |
+| ---------------------------------- | ------------------------------------------ |
+| **:enabled**                       | 指接受输入的元素                           |
+| **:disabled**                      | 指不接受输入的元素                         |
+| **:checked**                       | 指用户或文档默认选中的单选按钮或复选框元素 |
+| **:indeterminate**                 |                                            |
+| **:default**                       | 指默认选中的单选按钮、复选框或选项         |
+| **:valid**                         |                                            |
+| **:invalid**                       |                                            |
+| **:in-range**                      |                                            |
+| **:out-of-range**                  |                                            |
+| **:required**                      | 指必需输入的输入框                         |
+| **:optional**                      |                                            |
+| **:read-write**                    | 指可由用户输入的输入框                     |
+| **:read-only**                     | 指不能由用户输入的输入框                   |
 
 
 
@@ -264,7 +289,7 @@ h2:after {
 }
 ```
 
-应用场景：通过伪元素来实现字体图标、在图像链接上添加半透明黑幕、用于清除浮动。
+应用场景：通过伪元素来实现字体图标、在图像链接上添加半透明黑幕、用于清除浮动等。
 
 ## 字体
 
@@ -272,9 +297,8 @@ font-style：italic是斜体，normal是不倾斜。
 
 复合属性：`font: font-style font-weight  font-size/line-height font-family;`
 
-1. 按上面顺序书写，属性间以空格隔开。
+1. 按上面顺序书写，属性间以空格隔开，说明：`font：正斜 粗细 大小/行高 字体`。。
 2. 复合写法中不需要设置的属性值可以省略（会使用默认值），但font-size、font-family必须存在。
-3. `font：正斜 粗细 大小/行高 字体`。
 
 `@font-face {}`：用于引入自定义字体。
 
@@ -301,7 +325,7 @@ format的值有：
 文本的外观，比如文本的颜色、对齐文本、装饰文本、文本缩进、行间距等。
 
 - color：文本颜色，规范建议使用十六进制的RGB颜色值，字母小写，颜色可以缩写时使用缩写。
-- text-align：横向对齐文本对齐，left（默认）、right、center，影响的是行内、行内块元素。
+- text-align：横向对齐，left（默认）、right、center，影响的是行内、行内块元素。
 - vertical-align：纵向对齐，只能用于行内元素和置换元素。（baseline（默认）、bottom、middle、top、text-top等）
 - text-decoration：装饰文本，给文本添加下划线、删除线、上划线等，none（默认）、underline（下划线）、overline（上划线）、line-through（删除线）。
 - text-indent：文本缩进，通常是将段落的首行缩进，数值，单位px或em等，em是相对单位，相对当前元素（font-size）的1个文字的大小，如果当前元素没有设置font-size，则相对父元素。
@@ -328,27 +352,36 @@ format的值有：
 
 分类：块元素、行内元素、行内块元素。
 
-block——块元素特点：
+**block——块元素特点：**
 
 1. 独占一行；
 2. 高度、宽度、内边距、外边距可以控制；
 3. 宽度默认是父级宽度的100%；
 4. 是一个容器及盒子，里面可以放行内元素、块元素（文字类的除外，比如p）。
 
-inline——行内元素特点：
+HTML 中的块级元素：
+
+```html
+<div>、<dl>、<dd>、<ul>、<ol>、<li>、<h1>~<h6>、<hr>、<p>、<footer>、<header>、<form>、<section>、<table>
+<address>、<article>、<aside>、<blockquote>、<fieldset>、<figcaption>、<figure>、<pre>
+```
+
+**inline——行内元素特点：**
 
 1. 一行可显示多个行内元素。
 2. 宽度、高度直接设置无效；默认宽度为其本身内容宽度。
 4. 内容只能是容纳文本或其他行内元素。
 5. a标签内不能再放a标签，a标签内可以放块级元素，但给a转换为块元素更安全。
 
-inline-block——行内块元素：img、input、td，同时具有块元素和行内元素的一些特点：
+**inline-block——行内块元素：**
+
+img、input、td，同时具有块元素和行内元素的一些特点：
 
 1. 一行可显示多个，两个行内块元素间存在间隙，很难控制这个间隙。
 2. 默认宽度为其本身内容的宽度。
 3. 高度、宽度、内边距、外边距可以控制。
 
-不同模式间的转换：display。
+不同模式间的转换：`display:block | inline | inline-block`。
 
 ## 元素透明度
 
@@ -369,7 +402,11 @@ inline-block——行内块元素：img、input、td，同时具有块元素和�
 - 如果只指定一个数值，那么这个数值一定是x坐标，另一个默认center。
 - 如果精确单位和方位名词混合使用，第一个一定是x坐标，第二个一定是y坐标。
 
-背景大小：background-size。
+背景大小：background-size，值为关键字（cover、contain、auto）或数值（百分比、em、px等）。
+
+- `background-size: 一个值;`，值指定图片的宽度，图片的高度隐式的为 auto 。
+- `background-size: 值1 值2;`，第一个值指定图片的宽度，第二个值指定图片的高度。
+- `background-size: 值1, 值2;`，设置多重背景的图片大小
 
 背景固定：background-attachment：scroll（随内容滚动，默认）、fixed（背景固定）。
 
@@ -408,7 +445,7 @@ css3，ie9+才支持：背景色半透明：`background-color：rgba(0, 0, 0, .8
 
 继承：某些样式不仅能应用到所指元素上，还应用到元素的后代上。（特例：body元素定义了背景样式但html没有定义，此时背景样式会向上传递给html元素）
 
-border、大多数盒模型属性不会被继承；text-、font-、line-这些开头的可以继承，以及color属性。（line-height：可以不加单位，不加单位时表倍数，当前元素的倍数。）
+border、大多数盒模型属性不会被继承；**text-、font-、line-这些开头的可以继承，以及color属性**。（line-height：可以不加单位，不加单位时表倍数，当前元素的倍数。）
 
 常用的css可继承的属性：
 
@@ -461,7 +498,7 @@ width、height无法应用到行内非置换元素。
 盒子模型有两个，标准盒模型和替代盒模型：
 
 - 标准盒模型（box-sizing：content-box）（默认的）：width和height是指content的大小（整个盒子的大小为border+padding+content）。
-- 替代盒模型（box-sizing：border-box）：width和height则是指整个盒子的大小（整个盒子的大小为border+padding+content）。
+- 替代盒模型（box-sizing：border-box）：width和 height则是指整个盒子的大小（整个盒子的大小为border+padding+content）。
 - 指定了width和height时，它俩一个是content不变（标准盒模型），一个是盒子大小不会变（替代盒模型）。
 
 ### **border：**边框
@@ -533,6 +570,16 @@ CSS3新增盒子阴影：`box-shadow：h-shadow v-shadow blur spread color inset
 | inset    | 可选，将阴影改为内部阴影<br>（outset-外部阴影、inset-内部）  |
 
 盒子阴影不占用空间，不会影响其他的盒子。
+
+## html与body
+
+1. html 与 body标签是不同的**块级元素**，是父子关系。
+2. html元素的宽与高取决于浏览器的宽高。html元素是块级元素，根据块级元素的性质，html默认宽度是占一行的，也就是浏览器窗口的宽度。**如果没给html设置高度，那么默认的高度就是有它里面包含的内容高度所决定的**，如果给html设置了`height:100%`，那么它的高度就是浏览器窗口的高度。
+3. html元素默认设置了`overflow:auto`的css样式，在需要的时候就会显示滚动条。也就是它里面的内容高度超过了浏览器窗口的高度，不管html有没有加上高度，都会出现滚动条。
+4. body元素默认的定位是position:static，基于 **设置了定位的元素是参考该元素最近的、且设置了非static定位属性的父元素来定位 **的原则，那么所有定位子元素（父元素没设置定位属性）的定位都是相对于html元素的坐标系统。
+5. 在几乎所有的现代浏览器中，页面跟浏览器窗口的偏移量是通过给body元素设置margin属性，而不是给html元素设置padding属性。我给html设置了padding也是起作用的。
+
+
 
 ## 浮动
 
@@ -936,9 +983,7 @@ table标签的一个属性——**border-collapse**，其属性值作用如下�
 
 # PC网页布局
 
-**基本布局模式：**
-
-页面布局的三大核心：盒子模型、浮动、定位；网页布局的本质就是用CSS摆放盒子（把盒子摆放到相应位置）。CSS提供了三种传统的布局方式（简单地说就是盒子的排列顺序是咋样的），实际开发中一个页面都包含这三种布局（移动端中还有新的布局方式）：
+**基本布局模式：**页面布局的三大核心：盒子模型、浮动、定位；网页布局的本质就是用CSS摆放盒子（把盒子摆放到相应位置）。CSS提供了三种传统的布局方式（简单地说就是盒子的排列顺序是咋样的），实际开发中一个页面都包含这三种布局（移动端中还有新的布局方式）：
 
 1. 普通流（标准流/文档流）：标签按照默认的方式进行排列。
    - 块元素独占一行（div、hr、p、h、ul、ol、dl、from、table）。
@@ -963,7 +1008,7 @@ table标签的一个属性——**border-collapse**，其属性值作用如下�
 4. 遵循的逻辑：
    - 制作HTML结构（遵循先有结构，后有样式）。
    - 理清楚布局结构再写代码。
-   - 总结：（**理清布局，自上向下、自左向右、由外而内，先结构后样式，一步步进行操作**）
+   - （**总结理清布局，自上向下、自左向右、由外而内，先结构后样式，一步步进行操作**）
 
 **导航栏：实际开发使用li+a的做法。**
 

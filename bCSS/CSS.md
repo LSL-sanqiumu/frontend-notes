@@ -475,7 +475,7 @@ border、大多数盒模型属性不会被继承；**text-、font-、line-这些
 
 ### 层叠性
 
-层叠性主要解决样式冲突问题，相同选择器设置相同的样式（值不同），此时一个样式就会覆盖另一个冲突的样式。
+层叠性主要解决样式冲突问题，相同选择器设置相同的样式（值不同），此时一个样式就会覆盖另一个冲突的样式。（相同权重的样式会发生覆盖）
 
 重叠性原则：就近原则，哪个离body结构近哪个就执行，注意**只是覆盖冲突的样式，并不是全部覆盖**。（如果是不同css文件中的样式起冲突呢？一般都不会出现不同文件下的样式冲突，因为样式文件都对应一个结构）。
 
@@ -500,6 +500,9 @@ width、height无法应用到行内非置换元素。
 - 标准盒模型（box-sizing：content-box）（默认的）：width和height是指content的大小（整个盒子的大小为border+padding+content）。
 - 替代盒模型（box-sizing：border-box）：width和 height则是指整个盒子的大小（整个盒子的大小为border+padding+content）。
 - 指定了width和height时，它俩一个是content不变（标准盒模型），一个是盒子大小不会变（替代盒模型）。
+- 盒模型类型不能进行继承，默认的是标准盒模型。
+
+子元素可以将width、height设置为百分比来对父元素的宽高进行继承，注意无论父元素是哪种盒模型，继承的都是content的宽高。
 
 ### **border：**边框
 
@@ -529,7 +532,7 @@ padding：top right bottom left；四个值，上右下左的顺序；
 
 总结：如果没有指定值某个方位的值，则按照上-下、左-右的关系来确定，padding的值的顺序按照顺时针排放（上右下左）。
 
-注意：如果盒子本身没有指定width/height，则padding不会影响盒子的width/height，（继承的width、height不算指定，width、height不是不能继承吗）。
+
 
 ### **margin：**外边距
 
@@ -543,7 +546,7 @@ margin：0 auto；块级元素必须设置了宽度才能实现水平居中。�
 2. 浮动的元素没有内外边距合并问题；
 3. **嵌套块元素垂直外边距的塌陷：**
    - ![](image/margin塌陷问题.png)
-4. 总结就是：上下相邻或嵌套的块级盒子会垂直方向上发生外边距合并（浮动的元素不会）。
+4. **总结：上下相邻或嵌套的块级盒子会垂直方向上发生外边距合并（浮动的元素不会）。**
 
 清除网页元素的内外边距：
 
@@ -570,6 +573,27 @@ CSS3新增盒子阴影：`box-shadow：h-shadow v-shadow blur spread color inset
 | inset    | 可选，将阴影改为内部阴影<br>（outset-外部阴影、inset-内部）  |
 
 盒子阴影不占用空间，不会影响其他的盒子。
+
+```css
+.box-shadow-test {
+      height: 200px;
+      width: 200px;
+      margin: 100px auto;
+      /* transform: rotate(45deg); */
+      border-radius: 200px 0 0 0;
+      box-shadow:
+      /*参数依次为：颜色、水平阴影位置、垂直阴影位置、模糊距离、阴影大小*/
+         #f44336 -2px -2px 0 1px, 
+         #ff9800 -4px -4px 0 3px,
+         #ffeb3b -6px -6px 0 5px, 
+         #8bc34a -8px -8px 0 7px, 
+         #00bcd4 -10px -10px 0 9px,
+         #2196f3 -12px -12px 0 11px,
+         #9c27b0 -14px -14px 0 13px; 
+}
+```
+
+
 
 ## html与body
 
@@ -692,13 +716,13 @@ CSS3新增盒子阴影：`box-shadow：h-shadow v-shadow blur spread color inset
    - sticky元素仅在其父元素内生效，当其父元素区域滚动出了可视区后，该黏性元素也随之消失。
 
 
-结合top、bottom、left、right四个属性使用，这四个属性表示偏移量，是相对于元素边线的偏移量。
+定位要结合top、bottom、left、right四个属性使用，这四个属性表示偏移量，是相对于元素边线的偏移量。
 
 子绝父相：子级使用绝对定位，父级要用相对定位。（子级绝对定位，脱离标准流，不会影响其他盒子的位置）
 
 ![](image/子绝父相.png)
 
-叠放顺序：`z-index`：正、负、0、auto（默认），数值越大在越位于前面。
+叠放顺序：`z-index`：正、负、0、auto（默认），数值越大越位于前面。
 
 绝对定位与固定定位的特殊性：
 
@@ -707,6 +731,8 @@ CSS3新增盒子阴影：`box-shadow：h-shadow v-shadow blur spread color inset
 - 绝对定位或固定定位都脱离标准流，不会触发外边距合并问题。
 - 绝对定位或固定定位会压住它下面的标准流的所有内容，浮动则不会压住文字或图片。
 
+
+
 ## 显示与隐藏
 
 让一个元素在页面中显示或隐藏。
@@ -714,6 +740,8 @@ CSS3新增盒子阴影：`box-shadow：h-shadow v-shadow blur spread color inset
 1. display：是显式隐藏，使用none属性值，block属性值还有显示元素的意思。
 2. visibility：是显式隐藏，visible（元素可视）、hidden（元素隐藏），隐藏后继续占有原来的位置。
 3. overflow：是隐式隐藏，溢出隐藏，visible、hidden、scroll（总是有滚动条）、auto（在溢出的时候出现滚动条）。
+
+
 
 ## CSS高级技巧
 
@@ -981,9 +1009,9 @@ table标签的一个属性——**border-collapse**，其属性值作用如下�
     }
 ```
 
-# PC网页布局
+# PC布局
 
-**基本布局模式：**页面布局的三大核心：盒子模型、浮动、定位；网页布局的本质就是用CSS摆放盒子（把盒子摆放到相应位置）。CSS提供了三种传统的布局方式（简单地说就是盒子的排列顺序是咋样的），实际开发中一个页面都包含这三种布局（移动端中还有新的布局方式）：
+基本布局模式：页面布局的三大核心：盒子模型、浮动、定位；网页布局的本质就是用CSS摆放盒子（把盒子摆放到相应位置）。CSS提供了三种传统的布局方式（简单地说就是盒子的排列顺序是咋样的），实际开发中一个页面都包含这三种布局（移动端中还有新的布局方式）：
 
 1. 普通流（标准流/文档流）：标签按照默认的方式进行排列。
    - 块元素独占一行（div、hr、p、h、ul、ol、dl、from、table）。
@@ -991,7 +1019,7 @@ table标签的一个属性——**border-collapse**，其属性值作用如下�
 2. 浮动。
 3. 定位。
 
-**网页布局原则：**
+网页布局原则：
 
 1. 网页布局第一准则：多个块级元素纵向排列找标准流，多个块级元素横向排列找浮动。
 
@@ -1000,7 +1028,7 @@ table标签的一个属性——**border-collapse**，其属性值作用如下�
    - 要遵守网页布局第一准则。
    - 如果一个元素浮动了，其余的兄弟元素也要浮动。
 
-**页面布局整体思路：**（版心、上下、左右）
+页面布局整体思路：（版心、上下、左右）
 
 1. 确定页面版心（可视区、主体区域）。
 2. 分析页面的上下布局（行模块）。（多个块级元素纵向排列找标准流，多个块级元素横向排列找浮动）
@@ -1008,21 +1036,98 @@ table标签的一个属性——**border-collapse**，其属性值作用如下�
 4. 遵循的逻辑：
    - 制作HTML结构（遵循先有结构，后有样式）。
    - 理清楚布局结构再写代码。
-   - （**总结理清布局，自上向下、自左向右、由外而内，先结构后样式，一步步进行操作**）
 
-**导航栏：实际开发使用li+a的做法。**
+**页面编写总结：理清布局，自上向下、自左向右、由外而内，先结构后样式，一步步进行操作。**
+
+导航栏：实际开发使用li+a的做法。
 
 ![](image/nav.png)
 
-# CSS编写规范
+# CSS规范
 
 [CSS 代码的书写规范、顺序 | DeveWork](https://devework.com/css-written-specifications.html)（[CSS 代码的书写规范、顺序 - 云+社区 - 腾讯云 (tencent.com)](https://cloud.tencent.com/developer/article/1025155)）。
 
-1. 位置-显示相关：display、position、top、right、z-index、float、clear、visibility、overflow等。
-2. 大小-盒子相关：width、height、padding、margin等。
-3. 文字-文本相关：font、line-height、letter-spacing、color、text-align等。
-4. 背景-背景边框：background、border等。
+1. 位置—布局定位相关：display、position、top、right、z-index、float、clear、visibility、overflow等。
+2. 大小—盒模型相关：width、height、padding、margin等。
+3. 文本：font、line-height、letter-spacing、color、text-align等。
+4. 背景边框：background、border等。
 5. 其他-其他操作：animation、transition等（动画、变换、背景渐变、阴影等）。
+
+[代码规范 | Aotu.io - 前端代码规范](https://guide.aotu.io/docs/css/code.html)
+
+样式文件头：
+
+```css
+@charset "UTF-8";
+```
+
+样式代码风格：
+
+```css
+.style{
+    display: block;
+    width: 50px;
+}
+```
+
+选择器：
+
+```apl
+尽量少用通用选择器 *
+不使用 ID 选择器
+不使用无具体语义定义的标签选择器
+```
+
+每个选择占一行：
+
+```css
+.jdc, 
+.jdc_logo, 
+.jdc_hd {
+    color: #ff0;
+}
+```
+
+颜色值 `rgb()` `rgba()` `hsl()` `hsla()` `rect()` 中不需有空格，且取值不要带有不必要的 0。
+
+```css
+.jdc {
+    color: rgba(255,255,255,.5);
+}
+```
+
+css属性值需要用到引号时，统一使用单引号。
+
+样式书写顺序：
+
+```css
+1.布局定位属性：display / position / float / clear / visibility / overflow
+2.自身属性：width / height / margin / padding / border / background
+3.文本属性：color / font / text-decoration / text-align / vertical-align / white- space / break-word
+4.其他属性（CSS3）：content / cursor / border-radius / box-shadow / text-shadow / background:linear-gradient …
+```
+
+```css
+.jdc {
+    display: block;
+    position: relative;
+    float: left;
+    width: 100px;
+    height: 100px;
+    margin: 0 10px;
+    padding: 20px 0;
+    font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+    color: #333;
+    background: rgba(0,0,0,.5);
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -o-border-radius: 10px;
+    -ms-border-radius: 10px;
+    border-radius: 10px;
+}
+```
+
+
 
 # 转换、过渡、动画
 
@@ -1153,7 +1258,7 @@ animation-timing-function（动画的速度曲线细节）：
 
 
 
-# HTML5和CSS3入门
+# HTML5和CSS3
 
 ## 初始化css模板
 

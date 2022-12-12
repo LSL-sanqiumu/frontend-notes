@@ -297,7 +297,7 @@ font-style：italic是斜体，normal是不倾斜。
 
 复合属性：`font: font-style font-weight  font-size/line-height font-family;`
 
-1. 按上面顺序书写，属性间以空格隔开，说明：`font：正斜 粗细 大小/行高 字体`。。
+1. 按上面顺序书写，属性间以空格隔开，说明：`font：正斜 粗细 大小/行高 字体`。
 2. 复合写法中不需要设置的属性值可以省略（会使用默认值），但font-size、font-family必须存在。
 
 `@font-face {}`：用于引入自定义字体。
@@ -356,7 +356,7 @@ format的值有：
 
 1. 独占一行；
 2. 高度、宽度、内边距、外边距可以控制；
-3. 宽度默认是父级宽度的100%；
+3. 宽度默认是父级宽度的100%，高度如果没有设置则按照其里面内容的高度；
 4. 是一个容器及盒子，里面可以放行内元素、块元素（文字类的除外，比如p）。
 
 HTML 中的块级元素：
@@ -424,11 +424,11 @@ css3，ie9+才支持：背景色半透明：`background-color：rgba(0, 0, 0, .8
 
 ## CSS三大特性
 
-### 优先级/特指度
+### 优先级
 
 解决使用不同选择符选择了相同的元素下的样式冲突问题。（选择器的优先性）
 
-如果选择器相同（特指度相同），那就是层叠；选择器不同时则根据权重判断，各选择器权重如下：
+如果选择器相同（特指度相同），那就是层叠；选择器不同时则根据权重判断，权重大的将会覆盖权重小的。各选择器权重如下：
 
 - 通配符*：`0,0,0,0`；继承或者连结符（>、+等）是没有特指度的，连0都没有。
 - 元素选择器：`0,0,0,1`。
@@ -489,6 +489,8 @@ border、大多数盒模型属性不会被继承；**text-、font-、line-这些
 
 ## 盒模型
 
+行内元素、块元素、行内块元素都存在盒模型，行内元素不支持宽和高，但仍可设置padding、margin、border。
+
 ![](image/盒子模型.jpg)
 
 ### width height：宽高
@@ -502,7 +504,7 @@ width、height无法应用到行内非置换元素。
 - 指定了width和height时，它俩一个是content不变（标准盒模型），一个是盒子大小不会变（替代盒模型）。
 - 盒模型类型不能进行继承，默认的是标准盒模型。
 
-子元素可以将width、height设置为百分比来对父元素的宽高进行继承，注意无论父元素是哪种盒模型，继承的都是content的宽高。
+子元素可以将width、height设置为百分比来对父元素的宽高进行继承，注意无论父元素是哪种盒模型，继承的都是content的宽高。子元素是块级元素时，默认继承父元素的width。
 
 ### **border：**边框
 
@@ -597,11 +599,10 @@ CSS3新增盒子阴影：`box-shadow：h-shadow v-shadow blur spread color inset
 
 ## html与body
 
-1. html 与 body标签是不同的**块级元素**，是父子关系。
-2. html元素的宽与高取决于浏览器的宽高。html元素是块级元素，根据块级元素的性质，html默认宽度是占一行的，也就是浏览器窗口的宽度。**如果没给html设置高度，那么默认的高度就是有它里面包含的内容高度所决定的**，如果给html设置了`height:100%`，那么它的高度就是浏览器窗口的高度。
-3. html元素默认设置了`overflow:auto`的css样式，在需要的时候就会显示滚动条。也就是它里面的内容高度超过了浏览器窗口的高度，不管html有没有加上高度，都会出现滚动条。
-4. body元素默认的定位是position:static，基于 **设置了定位的元素是参考该元素最近的、且设置了非static定位属性的父元素来定位 **的原则，那么所有定位子元素（父元素没设置定位属性）的定位都是相对于html元素的坐标系统。
-5. 在几乎所有的现代浏览器中，页面跟浏览器窗口的偏移量是通过给body元素设置margin属性，而不是给html元素设置padding属性。我给html设置了padding也是起作用的。
+1. html元素的宽与高取决于浏览器的宽高。html元素是块级元素，根据块级元素的性质，html默认宽度是占一行的，也就是浏览器窗口的宽度。**如果没给html设置高度，那么默认的高度就是有它里面包含的内容高度所决定的**，如果给html设置了`height:100%`，那么它的高度就是浏览器窗口的高度。
+2. html元素默认设置了`overflow:auto`的css样式，在需要的时候就会显示滚动条。也就是它里面的内容高度超过了浏览器窗口的高度，不管html有没有加上高度，都会出现滚动条。
+3. body元素默认的定位是position:static，基于 **设置了定位的元素是参考该元素最近的、且设置了非static定位属性的父元素来定位 **的原则，那么所有定位子元素（父元素没设置定位属性）的定位都是相对于html元素的坐标系统。
+4. 在几乎所有的现代浏览器中，页面跟浏览器窗口的偏移量是通过给body元素设置margin属性，而不是给html元素设置padding属性。我给html设置了padding也是起作用的。
 
 
 
@@ -945,13 +946,21 @@ display: -webkit-box;
 
 ![](image/图片.png)
 
-### SEO优化标签
+### SEO优化—TDK
+
+TDK：title、description、keywords。
 
 ```html
 <title>Title</title> <!-- 网页标题 -->
 <meta name="description" content=""> <!-- 网页描述标签 -->
 <meta name="keywords" content=""> <!-- 网页关键字标签 -->
 ```
+
+### SEO优化—logo
+
+1. logo所在盒子先放一个h1标签。
+2. h1里面放一个a标签，logo图标是该标签的背景图。
+3. a标签的文字是网站名称，文字可以用`font-size`或`overflow`来实现隐藏。
 
 ### ico图标
 
@@ -1009,7 +1018,9 @@ table标签的一个属性——**border-collapse**，其属性值作用如下�
     }
 ```
 
-# PC布局
+# PC端
+
+## PC布局
 
 基本布局模式：页面布局的三大核心：盒子模型、浮动、定位；网页布局的本质就是用CSS摆放盒子（把盒子摆放到相应位置）。CSS提供了三种传统的布局方式（简单地说就是盒子的排列顺序是咋样的），实际开发中一个页面都包含这三种布局（移动端中还有新的布局方式）：
 
@@ -1037,11 +1048,72 @@ table标签的一个属性——**border-collapse**，其属性值作用如下�
    - 制作HTML结构（遵循先有结构，后有样式）。
    - 理清楚布局结构再写代码。
 
-**页面编写总结：理清布局，自上向下、自左向右、由外而内，先结构后样式，一步步进行操作。**
+**页面编写总结：理清布局，自上向下、自左向右、由整体到局部（由外而内），先结构后样式，一步步进行操作。**
 
 导航栏：实际开发使用li+a的做法。
 
 ![](image/nav.png)
+
+## 样式初始化
+
+```css
+* {
+    margin: 0;
+    padding: 0;
+    border-sizing: border-box;
+}
+```
+
+**初始化css模板：**
+
+```css
+* {
+    margin: 0;
+    padding: 0;
+}
+em,i {
+    font-style: normal;
+}
+li {
+    list-style: none;
+}
+img {
+    border: 0;
+    vertical-align: middle;
+}
+button {
+    cursor: pointer;
+}
+a {
+    color: #666;
+    text-decoration: none;
+}
+a:hover {
+    color: #c81623;
+}
+button,input {
+    font-family:Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
+    border: 0;
+    outline: none;
+}
+body{
+    -webkit-font-smoothing:antialiased;
+    background-color:#fff;
+    font:12px/1.5 Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
+	color:#666;
+}
+.hide,.none{
+    display:none;
+}
+.clearfix:after{
+    visibility:hidden;clear:both;display:block;content:".";height:0
+}
+.clearfix{
+    *zoom:1
+}
+```
+
+
 
 # CSS规范
 
@@ -1133,7 +1205,7 @@ css属性值需要用到引号时，统一使用单引号。
 
 ## transform-转换
 
-transform，CSS3，元素的位移（translate）、旋转（rotate）、缩放（scale）等。
+transform，CSS3，用于设置元素的位移（translate）、旋转（rotate）、缩放（scale）等。
 
 ### 2D转换
 
@@ -1165,7 +1237,7 @@ transform，CSS3，元素的位移（translate）、旋转（rotate）、缩放�
 
 ![](image/透视.png)
 
-- `perspective: 像素`。
+- `perspective: 像素值`。
 
 3D旋转：
 
@@ -1250,6 +1322,56 @@ animation-timing-function（动画的速度曲线细节）：
 
 ## 弹性布局
 
+### 弹性容器
+
+弹性盒依赖父子关系，声明弹性盒子方式如下：
+
+```css
+display: flex; 
+display: inline-flex;
+```
+
+声明了以上值中某一个的元素就会成为一个弹性容器（弹性容器负责控制子元素布局），其直接子元素就是弹性元素，只有直接子元素会使用弹性布局。
+
+flex与inline-flex的区别：声明为flex的元素仍然是块级元素（块级弹性容器），声明inline-flex的元素将是行内块元素（行内块弹性容器）。
+
+弹性容器有以下几个属性：
+
+| 属性            | 说明                                                         | 属性值                                                       |
+| --------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| flex-direction  | 设置弹性容器的主轴方向以便指定容器中弹性元素的摆放方式       | **row**（从左到右，默认值）<br>**row-reverse**（从右到左）<br>**column**（从上到下）<br>**column-reverse**（从下到上） |
+| flex-wrap       | 设置弹性容器内的弹性元素是否可以换行显示，默认不会换行不会缩减弹性元素尺寸 | **nowrap**（不允许换行，默认值）<br/>**wrap**（允许换行）<br />**wrap-reverse**（允许换行但换行后行的顺序与wrap的颠倒） |
+| flex-flow       | 上面两个属性的简写形式，用于定义弹性容器的换行方式以及主轴垂轴方向 | 书写形式为`flex-flow: xxx xxx;`<br>xxx为上面两个属性的值，顺序无要求 |
+| justify-content | 设置容器中的每行的弹性元素如何在主轴上分布（在主轴上的对齐方式），如果不允许弹性元素换行，那么该属性也将影响弹性元素如何溢出 | **flex-start**（弹性元素紧靠主轴起边，默认值）<br />**flex-end**（弹性元素紧靠主轴终边）<br />**center**（把弹性元素看作一个整体居中显示在主轴尺寸中点）<br />**space-between**（主轴起边和终边边界紧靠一个元素，其余的均匀分布在这两个元素之间且这些元素左右的空白相等）<br />**space-around**（每行的主轴尺寸减去弹性元素的尺寸总和后，剩下的尺寸平均分配给各个元素两边，相当于是弹性元素两边都有一样长度的外边距）<br />**space-evenly**（每个弹性元素两边的空白都相等） |
+| align-items     | 定义弹性元素在垂轴方向上的对齐方式（弹性属性的align-self属性将会覆盖align-items的值） | flex-start、flex-end<br />center（各个元素中心与垂轴中心对齐）<br />baseline、stretch（默认值） |
+| align-content   | 作用与justify-content类似，指定弹性容器中垂轴方向上的额外空间如何分配到**弹性元素行**之间和周围 | 默认值为stretch，其余的取值和justify-content一样             |
+|                 |                                                              |                                                              |
+
+
+
+### 弹性元素
+
+弹性容器的直接子代（子元素、子元素之间非空的文本节点、或者生成的内容）就是弹性元素，间接子代不是。
+
+弹性元素的特性：
+
+1. 外边距不折叠。
+2. float和clear对弹性元素不起作用，vertical-align对弹性元素没有影响，只用于设定弹性元素中文本的对齐方式。
+3. 弹性元素只要没有绝对地位，就是块级的。
+4. 绝对地位的弹性元素将从文档流中移除，因此不再参与弹性布局，但仍然受弹性容器的justify-content的影响，也受自身align-self的影响。
+   - 例如：如果弹性元素设定`align-self: center`，元素将相对垂轴居中，然后再使用top、bottom、外边距等属性移动位置。
+5. 弹性元素未设置min-width时，弹性基准将默认为auto（弹性基准即弹性元素在主轴方向上的初始大小）。
+
+弹性元素的属性：
+
+| 属性        | 说明                                                         | 属性值                                  |
+| ----------- | ------------------------------------------------------------ | --------------------------------------- |
+| align-self  | 在单个元素上覆盖align-items属性的值                          | 默认值为auto，其余取值和align-items一样 |
+| flex-grow   | 定义增长因子，即用于定义有多余的空间时是否允许弹性元素增大，<br />以及允许增大且有多余的空间时相对其他同辈元素以什么比例增大。<br />弹性容器的多余空间将按各弹性元素的非零增长因子按比例分配 | 大于或等于0的数字                       |
+| flex-shrink | 指定缩减的比例                                               | 大于或等于0的数字                       |
+| flex-basis  | 定义弹性元素的初始或默认尺寸                                 |                                         |
+|             |                                                              |                                         |
+
 
 
 
@@ -1259,55 +1381,6 @@ animation-timing-function（动画的速度曲线细节）：
 
 
 # HTML5和CSS3
-
-## 初始化css模板
-
-```css
-* {
-    margin: 0;
-    padding: 0;
-}
-em,i {
-    font-style: normal;
-}
-li {
-    list-style: none;
-}
-img {
-    border: 0;
-    vertical-align: middle;
-}
-button {
-    cursor: pointer;
-}
-a {
-    color: #666;
-    text-decoration: none;
-}
-a:hover {
-    color: #c81623;
-}
-button,input {
-    font-family:Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
-    border: 0;
-    outline: none;
-}
-body{
-    -webkit-font-smoothing:antialiased;
-    background-color:#fff;
-    font:12px/1.5 Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
-	color:#666;
-}
-.hide,.none{
-    display:none;
-}
-.clearfix:after{
-    visibility:hidden;clear:both;display:block;content:".";height:0
-}
-.clearfix{
-    *zoom:1
-}
-```
 
 ## HTML5新增
 
@@ -1363,6 +1436,7 @@ body{
 3. filter属性：将模糊或颜色偏移等图形效果应用于元素上。（语法格式`filter: 函数();`，例如`filter: blur(5px);`blur是模糊处理函数）
 4. calc函数：在声明css属性时可通过该函数执行一些计算。（`width: clac(100% - 80px);`，可进行加减乘除运算）
 5. 过渡：从一个状态慢慢过渡到另外一个状态。（经常和`:hover`一起搭配使用）
+6. CSS3 2D转换、CSS3 3D转换。
 
 # 单移动端
 

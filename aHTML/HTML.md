@@ -12,6 +12,8 @@ HTML 元素指的是从开始标签（start tag）到结束标签（end tag）�
 
 HTML元素标签分类：块级元素、行内块元素、行内元素。（内联元素、块元素）
 
+行内块元素之间会存在一定的空隙，可以使用浮动来解决。
+
 ## DOCTYPE
 
 ```html
@@ -63,7 +65,7 @@ div、span标签是没有语义的，可以将它们当作一个存放东西的�
 
 ## 实体符号
 
-常用的——（空格：`&nbsq;`；大于号：`&gt;`；小于号：`&lt;`）。
+常用的——（空格：`&nbsp;`；大于号：`&gt;`；小于号：`&lt;`）。
 
 ```html
 <a href="https://baidu.com" disabled="true">百度&copy;</a>
@@ -100,15 +102,16 @@ div、span标签是没有语义的，可以将它们当作一个存放东西的�
 
 ## a
 
-a是anchor的缩写，意为锚。
+a是anchor的缩写，意为锚，属于行内元素。
 
 1. href：链接地址，内部链接或外部链接。（**空链接：**#来代替；**下载链接：**链接地址是文件，文件是.exe或.zip格式）
 2. target：`_black——重新开一个窗口加载；_self——当前页跳转`。
 3. 锚点链接：锚点链接的href属性值为`#idName`的形式idName为目标标签的id属性名，用于快速定位页面中某个位置。
 
 ```html
-<a href="" target="" rel="nof"></a>
 <!-- 各种网页元素都可以加超链接-->
+<!-- Googole搜索引擎下不会跟踪rel=nofollow的链接 -->
+<a href="" target="" rel="nofollow"></a>
 ```
 
 

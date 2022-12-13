@@ -1343,9 +1343,8 @@ flex与inline-flex的区别：声明为flex的元素仍然是块级元素（块�
 | flex-wrap       | 设置弹性容器内的弹性元素是否可以换行显示，默认不会换行不会缩减弹性元素尺寸 | **nowrap**（不允许换行，默认值）<br/>**wrap**（允许换行）<br />**wrap-reverse**（允许换行但换行后行的顺序与wrap的颠倒） |
 | flex-flow       | 上面两个属性的简写形式，用于定义弹性容器的换行方式以及主轴垂轴方向 | 书写形式为`flex-flow: xxx xxx;`<br>xxx为上面两个属性的值，顺序无要求 |
 | justify-content | 设置容器中的每行的弹性元素如何在主轴上分布（在主轴上的对齐方式），如果不允许弹性元素换行，那么该属性也将影响弹性元素如何溢出 | **flex-start**（弹性元素紧靠主轴起边，默认值）<br />**flex-end**（弹性元素紧靠主轴终边）<br />**center**（把弹性元素看作一个整体居中显示在主轴尺寸中点）<br />**space-between**（主轴起边和终边边界紧靠一个元素，其余的均匀分布在这两个元素之间且这些元素左右的空白相等）<br />**space-around**（每行的主轴尺寸减去弹性元素的尺寸总和后，剩下的尺寸平均分配给各个元素两边，相当于是弹性元素两边都有一样长度的外边距）<br />**space-evenly**（每个弹性元素两边的空白都相等） |
-| align-items     | 定义弹性元素在垂轴方向上的对齐方式（弹性属性的align-self属性将会覆盖align-items的值） | flex-start、flex-end<br />center（各个元素中心与垂轴中心对齐）<br />baseline、stretch（默认值） |
+| align-items     | 定义弹性元素在垂轴方向上的对齐方式（弹性元素的align-self属性将会覆盖align-items的值） | flex-start、flex-end<br />center（各个元素中心与垂轴中心对齐）<br />baseline、stretch（默认值） |
 | align-content   | 作用与justify-content类似，指定弹性容器中垂轴方向上的额外空间如何分配到**弹性元素行**之间和周围 | 默认值为stretch，其余的取值和justify-content一样             |
-|                 |                                                              |                                                              |
 
 
 
@@ -1364,19 +1363,195 @@ flex与inline-flex的区别：声明为flex的元素仍然是块级元素（块�
 
 弹性元素的属性：
 
-| 属性        | 说明                                                         | 属性值                                  |
-| ----------- | ------------------------------------------------------------ | --------------------------------------- |
-| align-self  | 在单个元素上覆盖align-items属性的值                          | 默认值为auto，其余取值和align-items一样 |
-| flex-grow   | 定义增长因子，即用于定义有多余的空间时是否允许弹性元素增大，<br />以及允许增大且有多余的空间时相对其他同辈元素以什么比例增大。<br />弹性容器的多余空间将按各弹性元素的非零增长因子按比例分配 | 大于或等于0的数字                       |
-| flex-shrink | 指定缩减的比例                                               | 大于或等于0的数字                       |
-| flex-basis  | 定义弹性元素的初始或默认尺寸                                 |                                         |
-|             |                                                              |                                         |
+| 属性        | 说明                                                         | 属性值                                                       |
+| ----------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| align-self  | 在单个元素上覆盖align-items属性的值                          | 默认值为auto，其余取值和align-items一样                      |
+| flex-grow   | 定义增长因子，即用于定义有多余的空间时是否允许弹性元素增大，<br />以及允许增大且有多余的空间时相对其他同辈元素以什么比例增大。<br />弹性容器的多余空间将按各弹性元素的非零增长因子按比例分配 | 大于或等于0的数字                                            |
+| flex-shrink | 指定缩减的比例                                               | 大于或等于0的数字                                            |
+| flex-basis  | 弹性基准，定义弹性元素的初始或默认尺寸，有值时会覆盖width即使为width加上 !important | auto（初始值）、content、长度值（%、vw、px等）<br />百分比相对容器主轴计算 |
+| flex        | 增长因子、缩减因子、弹性基准的简写形式，如果flex属性没有设定增长因子或缩减因子时这两个值默认为1，如果flex属性没有声明则这两个值都为0。使用flex时弹性基准的默认值是0（**即全部空间按比例分配**给各个弹性元素而不是额外空间按比例分配（auto））。 | `flex: flex-grow flex-shrink flex-basis;`                    |
+| order       | 修改单个弹性元素的显示顺序，默认所有弹性元素的顺序都是0<br />（仅仅是视觉层面的改变，源码、元素绘制的顺序不会改变） | 大于等于0的整数                                              |
 
+flex属性说明：
 
+1. 规范中建议使用该属性而不使用flex-grow等单个属性。
+2. 如果没有设置宽度和flex-basis，弹性基准默认为auto，设定宽度为auto则弹性基准为content，如果设定了宽度则弹性基准为宽度；如果设定了弹性基准则弹性基准会覆盖掉width。
+3. 缩小：弹性容器宽度不足以装下所有弹性元素时，**`每个弹性元素的缩小的量=元素初始宽度*缩减因子*缩小比例`**，**`缩小比例=缺少的空间/(宽度1*缩减因子1+宽度2*缩减因子2+......)`。**
+4. 增大：基准为auto或具体值时将**额外空间**按比例分配，基准是0%或者0时**全部空间**按比例分配给各个弹性元素。
 
 
 
 ## 栅格布局
+
+### 栅格容器
+
+栅格容器也是使用display属性来创建：
+
+```css
+display: grid;         /* 块级框的栅格容器 */
+display: inline-grid;  /* 行内框的栅格容器 */
+```
+
+注意：栅格容器创建的是块级框，但栅格容器不是块级框容器，其与块级容器有一定的区别，区别如下：
+
+1. 栅格容器内浮动的元素不会影响到其他栅格元素，不会打乱容器内布局。
+2. 栅格容器的外边距不会与栅格元素的外边距折叠。
+3. 栅格容器上所有的column属性无效，没有::first-line、::first-letter伪元素。
+4. 栅格元素的float和clear属性无效，虽然功能无效但是仍然会影响栅格元素的display属性的计算值（因为栅格元素的display值在变成栅格元素前计算）。
+5. vertical-align不会影响栅格元素，但会影响栅格元素中的内容。
+6. 目标元素是浮动的或绝对定位的，如果为此元素声明`display: inline-grid;`，那么display的计算值将变为grid（也就是会变为块级框的栅格容器）。
+
+术语：
+
+1. 栅格轨道：两相邻的栅格线之间夹住的整个区域。
+2. 栅格单元：四条栅格线限定的区域，内部没有其他栅格线贯穿。
+3. 栅格区域：任何四条栅格线限定的区域，由一个或多个栅格单元组成。
+
+
+
+### 栅格线放置
+
+栅格线放置好后就可以得到相应的栅格单元，栅格容器内的元素将会依次在各自栅格单元中。
+
+栅格线放置相关的两个重要属性：`grid-template-rows`（横栅格线）、`grid-template-columns`（竖栅格线）。
+
+**1、创建栅格轨道宽度固定的栅格**
+
+```css
+/* 示例 */
+.box {
+    display: grid;
+    /* 设定三个固定宽度的栅格轨道，会有四条竖栅格线 */
+    /* 百分比相对的是栅格容器来进行计算 */
+    grid-template-columns: 200px 50% 100px;
+}
+/* 为栅格线命名：栅格线用[]包住并放在合适位置 */
+.box {
+    display: grid;
+    /* 四条栅格线：start、col1为起边栅格线、col2位距离起边200px的栅格线、col3为距col2有栅格容器宽度的一半远的栅格线，col4则是终边的栅格线 */
+    grid-template-columns: [start col1] 200px [col2] 50% [col3] 100px [col4 end last];
+}
+```
+
+栅格线名称可以设置多个，另外横栅格线和竖栅格线的命名空间不共用，也就是说横栅格线、竖栅格线的命名可以出现一样的。
+
+极值设定——minmax()、calc()：
+
+```css
+/* 示例 */
+.box {
+    display: grid;
+    /* 设定三个固定宽度的栅格轨道，会有四条竖栅格线 */
+    /* 百分比相对的是栅格容器来进行计算 */
+    grid-template-columns: 200px 50% 100px;
+    /* content的距离最小是3em，最大不超过栅格容器高度 */
+    grid-template-columns: 200px [content] minmax(3em,100%) 100px calc(100%-5em);
+}
+```
+
+**2、弹性栅格轨道**
+
+使用fr份数单位将容器平均划分：
+
+```css
+/* 示例 */
+.box {
+    display: grid;
+    /* 相当于将栅格平均分出四列 */
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    /* 除去固定轨道的尺寸，其余尺寸都分给中间那个轨道，也就得到了即有固定的的列又有弹性伸缩的列 */
+    grid-template-columns: 15em 1fr 10%;
+    /* 为轨道指定最小最大尺寸 */
+    grid-template-columns: 15em  3fr minmax(3em,3fr) 10%;
+}
+```
+
+了解——根据内容设定轨道的尺寸——min-content、max-content关键字：
+
+1. max-content：占据内容所需最大空间；宽度尽量大以防止换行。
+2. min-content：尽量少占据空间，够显示内容即可。
+
+了解——根据轨道中的内容适配：fit-content()函数。
+
+**3、重复栅格线**
+
+repeat()函数：函数中轨道的值几乎可以使用任何值。
+
+```css
+/* 示例 */
+.box {
+    display: grid;
+    /* 创建10个列轨道 */
+    grid-template-columns: repeat(10, 100px);
+    /* 创建9个列轨道 */
+    grid-template-columns: repeat(3, 2em 1fr 1fr);
+    /* 创建10个列轨道 */
+    grid-template-columns: repeat(3, 2em 1fr 1fr) 2em;
+    /* 每隔3em就放一条横栅格线，只要不撑破栅格容器,auto-fill的只能声明一个 */
+    grid-template-rows: repeat(auto-fill, [top] 3em [bottom]);
+}
+```
+
+**4、栅格区域**
+
+grid-template-areas属性，用于划分栅格容器内的栅格区域，说明如下：
+
+```css
+.box {
+    display: grid;
+    /* 将容器划分为5个区域：header、leftside、content、rightside、footer */
+    grid-template-areas: 
+        "header header header header" 
+        "leftside content content rightside" 
+        "leftside footer footer footer";
+}
+<div class="box">
+	<div class="grid1"></div>
+</div>
+```
+
+然后就可以自定义将栅格容器内的栅格元素放置于某一个栅格区域中，设置方式如下：
+
+```css
+.grid1 {
+    /* 将该元素放于footer区域 */
+    grid-area: footer;
+}
+```
+
+值得注意的是，定义好了栅格区域，各区域的栅格线也有了默认的名称——`区域名称-start`、`区域名称-end`，每个区域的四条栅格线都是这样命名，因此这些栅格线往往都有多个名称。
+
+栅格区域划分时也可以不定义区域名称：
+
+```css
+.box {
+    display: grid;
+    /* 空名单元使用一个.或多个.来占位 */
+    grid-template-areas: 
+        "header header header header" 
+        "leftside ... ... rightside" 
+        "leftside footer footer footer";
+}
+<div class="box">
+	<div class="grid1"></div>
+</div>
+```
+
+栅格区域也可以隐式命名，例如：
+
+```css
+.box {
+    display: grid;
+    /* 只要栅格线的命名按照区域划分的自动创建名称的规则来命名，那么就会触发栅格区域划分 */
+    grid-template-columns: [header-start footer-start] 1fr [content-start] 1fr [content-start] 1fr [header-end footer-end];
+    grid-template-rows: [header-start] 1fr [header-end content-start] 1fr [content-end footer-start] 1fr [footer-end];
+}
+<div class="box">
+	<div class="grid1"></div>
+</div>
+```
+
+
 
 
 

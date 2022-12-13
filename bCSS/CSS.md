@@ -1320,9 +1320,9 @@ animation-timing-function（动画的速度曲线细节）：
 
 # 弹性布局与栅格布局
 
-## 弹性布局
+# 弹性布局
 
-### 弹性容器
+## 弹性容器
 
 弹性盒依赖父子关系，声明弹性盒子方式如下：
 
@@ -1348,7 +1348,7 @@ flex与inline-flex的区别：声明为flex的元素仍然是块级元素（块�
 
 
 
-### 弹性元素
+## 弹性元素
 
 弹性容器的直接子代（子元素、子元素之间非空的文本节点、或者生成的内容）就是弹性元素，间接子代不是。
 
@@ -1381,9 +1381,9 @@ flex属性说明：
 
 
 
-## 栅格布局
+# 栅格布局
 
-### 栅格容器
+## 栅格容器
 
 栅格容器也是使用display属性来创建：
 
@@ -1409,7 +1409,7 @@ display: inline-grid;  /* 行内框的栅格容器 */
 
 
 
-### 栅格线放置
+## 栅格线放置
 
 栅格线放置好后就可以得到相应的栅格单元，栅格容器内的元素将会依次在各自栅格单元中。
 
@@ -1550,6 +1550,227 @@ grid-template-areas属性，用于划分栅格容器内的栅格区域，说明�
 	<div class="grid1"></div>
 </div>
 ```
+
+## 栅格元素放置
+
+在栅格中附加栅格元素，两种方式：引用栅格线、引用栅格区域。
+
+将元素附加到栅格线上的四种属性：`grid-row-start`、`grid-row-end`、`grid-column-start`、`grid-column-end`，意为将元素的边界附加到某条栅格线上，它们的初始值是auto。用法示例如下：
+
+### **1、使用栅格线的编号：**
+
+```html
+<style>
+    .grid {
+        display: grid;
+        width: 800px;
+        margin: 0 auto;
+        grid-template-rows: repeat(5,5em);
+        grid-template-columns: repeat(10,5em);
+        background-color: pink;
+    }
+    .one {
+        /* 编号为2的横栅格线为横起边，编号为4的横栅格线为横终边 */
+        grid-row-start: 2;
+        grid-row-end: 4;
+        /* 编号为2的竖栅格线为竖起边，编号为4的竖栅格线为竖终边 */
+        grid-column-start: 2;
+        grid-column-end: 4;
+        background-color: aqua;
+    }
+    .two {
+        /* 不声明grid-row-end时则为下一条栅格，此时即grid-row-end=2 */
+        grid-row-start: 1;
+        grid-column-start: 5;
+        grid-column-end: 10;
+        background-color: aqua;
+    }
+    .three {
+        grid-row-start: 4;
+        grid-column-start: 6;
+        /* span表示跨指定数目的栅格轨道，此处的意思为从第6条竖栅格线开始跨2个栅格轨道 */
+        /* span后数字只能是非0正整数，span定义在哪就往哪个方向延伸计数 */
+        grid-column-end: span 2;
+        background-color: aqua;
+    }
+    .four {
+        /* 使用grid-template-*来显式定义栅格线时可以使用负数来附加到右下角，不过此时会多一行一列出来用于安放该元素  */
+        grid-column-start: -1;
+        grid-row-start: -1;
+        background-color: aqua;
+    }
+</style>
+<div class="grid">
+    <div class="one">one</div>
+    <div class="two">two</div>
+    <div class="three">three</div>
+    <div class="four">four</div>
+</div>
+```
+
+效果图（除去第四个div外）：![](image/栅格-元素附加.png)
+
+### **2、使用栅格线的名称：**
+
+```html
+<style>
+    .grid {
+        display: grid;
+        width: 1000px;
+        margin: 0 auto;
+        grid-template-rows: repeat(5, [R] 4em);
+        grid-template-columns: 2em repeat(5, [col-A] 5em [col-B] 5em) 2em;
+        background-color: pink;
+    }
+    .one {
+        /* 名称为R的第二个横栅格线为横起边，编号为5的横栅格线为横终边 */
+        grid-row-start: R 2;
+        grid-row-end: 5;
+        /* 从左往右第一个名称为col-B的竖栅格线为起边，跨度2到达竖终边 */
+        grid-column-start: col-B;
+        grid-column-end: span 2;
+        background-color: aqua;
+    }
+    .two {
+        /* 第1个名称为R的横栅格线为横起边 */
+        grid-row-start: R;
+        /* 从第1个名称为R的横栅格线开始跨度2 */
+        grid-row-end: span R 2;
+        /* 第三个名称为col-A的竖栅格线为竖起边 */
+        grid-column-start: col-A 3;
+        /* 从竖起边开始跨度2个名称为col-A的栅格线，
+        即从第三个名称为col-A的竖栅格线开始跨过1个col-A栅格线，然后在后面一个col-A栅格线结束 */
+        grid-column-end: span 2 col-A;
+        background-color: aqua;
+    }
+    .three {
+        grid-row-start: 4;
+        /* 倒数第二个名称为col-A的栅格线为起边来放置元素 */
+        grid-column-start: col-A -2;
+        background-color: aqua;
+    }
+</style>
+<div class="grid">
+    <div class="one">one</div>
+    <div class="two">two</div>
+    <div class="three">three</div>
+</div>
+```
+
+效果图：![](image/栅格-元素附加-名称.png)
+
+### **3、使用隐式栅格线名称：**
+
+```html
+<style>
+    .grid {
+        display: grid;
+        width: 1000px;
+        margin: 0 auto;
+        /* 声明栅格区域 */
+        grid-template-areas: 
+            "header header header header"
+            "leftside content content rightside"
+            "leftside footer footer footer";
+        text-align: center;
+    }
+    .header {
+        /* 浏览器遇到自定义的标识符（这里是header），会在后面加上-start或-end */
+        grid-row-start: header;
+        /* grid-row-end，所以这里的header相当于header-end */
+        grid-row-end: header;
+        grid-column-start: header-start;
+        grid-column-end: header-end;
+        background-color: rgb(0, 136, 255);
+
+    }
+    .sidebar {
+        grid-row-start: 2;
+        grid-row-end: 4;
+        /* leftside-start，并跨度2 */
+        grid-column-start: leftside / span 2;
+        background-color: rgb(63, 160, 93);
+    }
+    .main {
+        grid-row-start: content;
+        grid-row-end: content;
+        grid-column-start: content;
+        grid-column-end: content;
+        background-color: rgb(193, 216, 46);
+    }
+    .navbar {
+        grid-row-start: rightside;
+        grid-row-end: 3;
+        grid-column-start: rightside;
+        background-color: rgb(210, 98, 54);
+    }
+    .footer {
+        grid-row-start: 3;
+        grid-row-end: span 1;
+        grid-column-start: footer;
+        grid-column-end: footer;
+        background-color: rgb(184, 64, 214);
+    }
+</style>
+<div class="grid">
+    <div class="header">header</div>
+    <div class="sidebar">sidebar</div>
+    <div class="main">main</div>
+    <div class="navbar">navbar</div>
+    <div class="footer">footer</div>
+</div>
+```
+
+效果图：![](image/栅格-元素附加-隐式名称.png)
+
+### 4、使用行列的简写属性：
+
+`grid-row: start / end;`、`grid-column: start / end;`，示例如下：
+
+```html
+<style>
+    .grid {
+        display: grid;
+        width: 1000px;
+        margin: 0 auto;
+        grid-template-rows: repeat(7, [R] 5em);
+        grid-template-columns: 2em repeat(5, [col-A] 5em [col-B] 5em) 2em;
+        background-color: pink;
+    }
+    .one {
+        /* start：第三个R；end：第7编号 */
+        grid-row: R 3 / 7;
+        /* start：第一个col-B；end：跨度2个轨道 */
+        grid-column: col-B / span 2;
+        background-color: aqua;
+    }
+    .two {
+        /* start：第一个R；end： 从第一个R开始跨度2轨道*/
+        grid-row: R / span R 2;
+        /* start：第三个col-A；end：从第三个col-A开始再跨度2个col-A； */
+        grid-column: col-A 3 / span 2 col-A;
+        background-color: aqua;
+    }
+    .three {
+        /* start：4号横栅格线；end：5号横栅格线; */
+        grid-row: 4;
+        /* start：倒数第2个col-A；end：倒数第二个col-A的下一个竖栅格线；*/
+        grid-column: col-A -2;
+        background-color: aqua;
+    }
+</style>
+<div class="grid">
+    <div class="one">one</div>
+    <div class="two">two</div>
+    <div class="three">three</div>
+</div>
+```
+
+效果图：![](image/栅格-元素附加-简写.png)
+
+## 隐式栅格元素
+
+
 
 
 

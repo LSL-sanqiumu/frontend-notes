@@ -1415,7 +1415,7 @@ display: inline-grid;  /* 行内框的栅格容器 */
 
 栅格线放置相关的两个重要属性：`grid-template-rows`（横栅格线）、`grid-template-columns`（竖栅格线）。
 
-**1、创建栅格轨道宽度固定的栅格**
+### 1、创建栅格轨道宽度固定的栅格：
 
 ```css
 /* 示例 */
@@ -1449,7 +1449,7 @@ display: inline-grid;  /* 行内框的栅格容器 */
 }
 ```
 
-**2、弹性栅格轨道**
+### 2、弹性栅格轨道：
 
 使用fr份数单位将容器平均划分：
 
@@ -1473,7 +1473,7 @@ display: inline-grid;  /* 行内框的栅格容器 */
 
 了解——根据轨道中的内容适配：fit-content()函数。
 
-**3、重复栅格线**
+### 3、重复栅格线：
 
 repeat()函数：函数中轨道的值几乎可以使用任何值。
 
@@ -1492,7 +1492,7 @@ repeat()函数：函数中轨道的值几乎可以使用任何值。
 }
 ```
 
-**4、栅格区域**
+### 4、栅格区域：
 
 grid-template-areas属性，用于划分栅格容器内的栅格区域，说明如下：
 
@@ -1521,7 +1521,7 @@ grid-template-areas属性，用于划分栅格容器内的栅格区域，说明�
 
 值得注意的是，定义好了栅格区域，各区域的栅格线也有了默认的名称——`区域名称-start`、`区域名称-end`，每个区域的四条栅格线都是这样命名，因此这些栅格线往往都有多个名称。
 
-栅格区域划分时也可以不定义区域名称：
+栅格区域划分时也可以不定义区域名称而使用`.`占位符，如下例：
 
 ```css
 .box {
@@ -1551,13 +1551,15 @@ grid-template-areas属性，用于划分栅格容器内的栅格区域，说明�
 </div>
 ```
 
+
+
 ## 栅格元素放置
 
-在栅格中附加栅格元素，两种方式：引用栅格线、引用栅格区域。
+在栅格中附加栅格元素，两种方式：基于栅格线的元素放置、基于栅格区域的元素放置，**栅格元素放置时是可以重叠的**。
 
 将元素附加到栅格线上的四种属性：`grid-row-start`、`grid-row-end`、`grid-column-start`、`grid-column-end`，意为将元素的边界附加到某条栅格线上，它们的初始值是auto。用法示例如下：
 
-### **1、使用栅格线的编号：**
+### 1、使用栅格线的编号：
 
 ```html
 <style>
@@ -1610,7 +1612,7 @@ grid-template-areas属性，用于划分栅格容器内的栅格区域，说明�
 
 效果图（除去第四个div外）：![](image/栅格-元素附加.png)
 
-### **2、使用栅格线的名称：**
+### 2、使用栅格线的名称：
 
 ```html
 <style>
@@ -1659,7 +1661,7 @@ grid-template-areas属性，用于划分栅格容器内的栅格区域，说明�
 
 效果图：![](image/栅格-元素附加-名称.png)
 
-### **3、使用隐式栅格线名称：**
+### 3、使用隐式栅格线名称：
 
 ```html
 <style>
@@ -1768,11 +1770,83 @@ grid-template-areas属性，用于划分栅格容器内的栅格区域，说明�
 
 效果图：![](image/栅格-元素附加-简写.png)
 
+### 5、使用区域
+
+基于区域放置属性，用grid-area属性来为栅格元素指定其所在栅格区域。
+
+栅格区域声明：
+
+```css
+.grid {
+    display: grid;
+    width: 1000px;
+    margin: 0 auto;
+    /* 声明具名栅格区域 */
+    grid-template-areas: 
+    "header header header header"
+    "leftside content content rightside"
+    "leftside footer footer footer";
+    text-align: center;
+    /* 声明了4行4列的栅格，具名区域也是由这些栅格单元组成而不是独立去创建一份 */
+    grid-template-rows: 200px [h-end m-start] 1fr [m-end] 3em 2em;
+    grid-template-columns: 20em [con-start main-start] 1fr 1fr [con-end main-end] 10em [nav-end]; 
+}
+```
+
+```html
+<div class="grid">
+    <div class="header">header</div>
+    <div class="sidebar">sidebar</div>
+    <div class="main">main</div>
+    <div class="navbar">navbar</div>
+    <div class="footer">footer</div>
+</div>
+```
+
+grid-area的：
+
+```css
+/* 用法1：引用具名区域来指定区域位置，确实也相当于引用栅格线，利用的是栅格区域的默认栅格线名称 */
+.header {
+    /* 只有一个值，实际上是四个都将是一个值，这里就相当于 grid-area: header / header / header / header; */
+    grid-area: header;
+    background-color: rgb(0, 136, 255);
+}
+.sidebar {
+    grid-area: leftside;
+    background-color: rgb(63, 160, 93);
+}
+/* 用法2：引用栅格线来指定区域位置 */
+/* 栅格线值的顺序为：row-start、column-start、row-end、column-end */
+.main {
+    /* 使用栅格线名称的简称，要求栅格线有命名为*-start、*-end形式的，会自动加上-start、-end */
+    grid-area: m / main / m / main;
+    background-color: rgb(193, 216, 46);
+}
+.navbar {
+    /* 使用栅格线名称 */
+    grid-area: m-start / main-end / m-end / nav-end;
+    background-color: rgb(210, 98, 54);
+}
+.footer {
+    /* 使用栅格线编号，如果只有一个数值那剩下的都将是auto */
+    grid-area: 3 / 2 / 4 / 5;
+    background-color: rgb(184, 64, 214);
+}
+```
+
+
+
 ## 隐式栅格元素
 
+摘自MND文档：
 
+1. 显式网格是用`grid-template-columns` 或 `grid-template-rows` 属性创建的。而隐式网格则是当有内容被放到网格外时才会生成的。
+2. 隐式网格中生成的行/列大小是参数默认是`auto`，大小会根据放入的内容自动调整。
+3. 可以使用grid-auto-rows和grid-auto-columns属性手动设定隐式网格的大小。
+4. 简单来说，隐式网格就是为了放显式网格放不下的元素，浏览器根据已经定义的显式网格自动生成的网格部分。
 
-
+## 栅格流
 
 
 

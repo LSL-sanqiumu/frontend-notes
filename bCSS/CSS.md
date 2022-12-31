@@ -291,6 +291,8 @@ h2:after {
 
 应用场景：通过伪元素来实现字体图标、在图像链接上添加半透明黑幕、用于清除浮动等。
 
+**【注意】创建的是元素内部的内容的前置或后置元素。**
+
 ## 字体
 
 font-style：italic是斜体，normal是不倾斜。
@@ -411,9 +413,9 @@ img、input、td，同时具有块元素和行内元素的一些特点：
 背景固定：background-attachment：scroll（随内容滚动，默认）、fixed（背景固定）。
 
 ```css
-/* 复合写法，位置没有限制 */
+/* 复合写法 */
 background：背景颜色 背景图片地址 背景平铺 背景图像滚动 背景图片位置;
-background：背景颜色 背景图片地址 背景平铺 背景图像滚动 背景图片位置/图片大小;
+background：背景颜色 背景图片地址 背景平铺 背景图像滚动 背景图片位置/背景大小;
 /* 示例：background: color image repeat position/size */
 background：red url() no-repeat scroll center center/400px 400px;
 ```
@@ -602,15 +604,28 @@ CSS3新增盒子阴影：`box-shadow：h-shadow v-shadow blur spread color inset
 1. html元素的宽与高取决于浏览器的宽高。html元素是块级元素，根据块级元素的性质，html默认宽度是占一行的，也就是浏览器窗口的宽度。**如果没给html设置高度，那么默认的高度就是有它里面包含的内容高度所决定的**，如果给html设置了`height:100%`，那么它的高度就是浏览器窗口的高度。
 2. html元素默认设置了`overflow:auto`的css样式，在需要的时候就会显示滚动条。也就是它里面的内容高度超过了浏览器窗口的高度，不管html有没有加上高度，都会出现滚动条。
 3. body元素默认的定位是position:static，基于 **设置了定位的元素是参考该元素最近的、且设置了非static定位属性的父元素来定位 **的原则，那么所有定位子元素（父元素没设置定位属性）的定位都是相对于html元素的坐标系统。
-4. 在几乎所有的现代浏览器中，页面跟浏览器窗口的偏移量是通过给body元素设置margin属性，而不是给html元素设置padding属性。我给html设置了padding也是起作用的。
+4. body相对于html元素，因此将body的宽度设置为百分比值时将是相对于html的宽度——即浏览器可视区域宽度。
+5. 在几乎所有的现代浏览器中，页面跟浏览器窗口的偏移量是通过给body元素设置margin属性，而不是给html元素设置padding属性。我给html设置了padding也是起作用的。
+6. 如果不设置html元素的背景色，那么body的背景色将会传递给根节点，此时整个页面背景色都将是body设置的背景色的颜色。
 
 
 
 ## 浮动
 
+### 概述
+
+标准流（文档标准流）：简单来说标准流就是浏览器按照各种元素标签排版布局中默认的状态，浏览器在渲染代码的时候是从左往右、从上到下开始渲染，元素也是从左往右、从上往下的流式排列。（也就是没有被其他排版浮动和定位相关的CSS属性干扰的就叫标准流，**块级元素无论宽有没有一行的长度都会独占一行**）。
+
 **浮动元素特性：**脱离文档流、浮动的盒子不再保留原来的位置、浮动元素一行中显示且顶端对齐、具有行内块特性。
 
 **使用：**浮动初衷就是为了解决文字环绕的；浮动元素经常与标准流父级元素搭配使用；浮动元素不会压住它下面标准流的文字或图片。
+
+**注意：**
+
+1. 浮动元素的兄弟元素尽量都要浮动，如果某一个块级元素不浮动那么其后面浮动的元素将在新的一行上显示。
+2. 浮动的元素影响的是其后面的兄弟元素的标准流，不会影响前面的。（也就是说，浮动的元素除了不压住其后面标准流的文字和图片之外，也不会压住其前面的非浮动块级元素，）
+
+### 清除浮动
 
 **清除浮动：**（清除浮动对父元素的影响）
 
@@ -1018,102 +1033,35 @@ table标签的一个属性——**border-collapse**，其属性值作用如下�
     }
 ```
 
-# PC端
+## 媒体查询
 
-## PC布局
-
-基本布局模式：页面布局的三大核心：盒子模型、浮动、定位；网页布局的本质就是用CSS摆放盒子（把盒子摆放到相应位置）。CSS提供了三种传统的布局方式（简单地说就是盒子的排列顺序是咋样的），实际开发中一个页面都包含这三种布局（移动端中还有新的布局方式）：
-
-1. 普通流（标准流/文档流）：标签按照默认的方式进行排列。
-   - 块元素独占一行（div、hr、p、h、ul、ol、dl、from、table）。
-   - 行内元素从左到右自动排列，一行满了会自动换行（span、i、a、em）。
-2. 浮动。
-3. 定位。
-
-网页布局原则：
-
-1. 网页布局第一准则：多个块级元素纵向排列找标准流，多个块级元素横向排列找浮动。
-
-2. 网页布局第二准则：先设置盒子大小，之后设置盒子的位置。 
-3. 为了约束浮动元素位置，我们网页布局一般采取的策略时：**先用标准流排列上下位置，内部子元素采用浮动排列左右位置**。浮动布局注意事项如下：
-   - 要遵守网页布局第一准则。
-   - 如果一个元素浮动了，其余的兄弟元素也要浮动。
-
-页面布局整体思路：（版心、上下、左右）
-
-1. 确定页面版心（可视区、主体区域）。
-2. 分析页面的上下布局（行模块）。（多个块级元素纵向排列找标准流，多个块级元素横向排列找浮动）
-3. 然后分析左右结构（行模块的列模块）。（列模块经常使用浮动布局，先确定列大小，再确定列位置（网页布局第二准则））
-4. 遵循的逻辑：
-   - 制作HTML结构（遵循先有结构，后有样式）。
-   - 理清楚布局结构再写代码。
-
-**页面编写总结：理清布局，自上向下、自左向右、由整体到局部（由外而内），先结构后样式，一步步进行操作。**
-
-导航栏：实际开发使用li+a的做法。
-
-![](image/nav.png)
-
-## 样式初始化
+媒体查询media query：（应该从小尺寸的写到大尺寸的）
 
 ```css
-* {
-    margin: 0;
-    padding: 0;
-    border-sizing: border-box;
+@media mediatype and|not|only (media feature) { /* not、only */
+    css样式
+} 
+/* 媒体类型：screen（屏幕，手机、平板、电脑等）、print（打印机）、all（所有） */
+/* 媒体特性： max-width、min-width、width等，这几个指定宽度*/
+```
+
+```css
+@media screen and (max-width: 760px) {
+    当屏幕宽度不大于760px时执行的css样式代码
+}
+/* screen 和 and 不能省略 数值单位不能省略 */
+@media screen and (min-width: 320px) {
+    当屏幕宽度不小于760px时执行的css样式代码
 }
 ```
 
-**初始化css模板：**
+通过媒体查询引入资源：link标签的media属性
 
 ```css
-* {
-    margin: 0;
-    padding: 0;
-}
-em,i {
-    font-style: normal;
-}
-li {
-    list-style: none;
-}
-img {
-    border: 0;
-    vertical-align: middle;
-}
-button {
-    cursor: pointer;
-}
-a {
-    color: #666;
-    text-decoration: none;
-}
-a:hover {
-    color: #c81623;
-}
-button,input {
-    font-family:Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
-    border: 0;
-    outline: none;
-}
-body{
-    -webkit-font-smoothing:antialiased;
-    background-color:#fff;
-    font:12px/1.5 Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
-	color:#666;
-}
-.hide,.none{
-    display:none;
-}
-.clearfix:after{
-    visibility:hidden;clear:both;display:block;content:".";height:0
-}
-.clearfix{
-    *zoom:1
-}
+<link rel="stylesheet" media="媒体类型 关键字 (媒体特性)" href=""/>
+
+<link rel="stylesheet" media="screen and (max-width: 320px)" href=""/>
 ```
-
-
 
 # CSS规范
 
@@ -1199,7 +1147,101 @@ css属性值需要用到引号时，统一使用单引号。
 }
 ```
 
+# PC端
 
+## PC布局
+
+基本布局模式：页面布局的三大核心：盒子模型、浮动、定位；网页布局的本质就是用CSS摆放盒子（把盒子摆放到相应位置）。CSS提供了三种传统的布局方式（简单地说就是盒子的排列顺序是咋样的），实际开发中一个页面都包含这三种布局（移动端中还有新的布局方式）：
+
+1. 普通流（标准流/文档流）：标签按照默认的方式进行排列。
+   - 块元素独占一行（div、hr、p、h、ul、ol、dl、from、table）。
+   - 行内元素从左到右自动排列，一行满了会自动换行（span、i、a、em）。
+2. 浮动。
+3. 定位。
+
+网页布局原则：
+
+1. 网页布局第一准则：多个块级元素纵向排列找标准流，多个块级元素横向排列找浮动。
+
+2. 网页布局第二准则：先设置盒子大小，之后设置盒子的位置。 
+3. 为了约束浮动元素位置，我们网页布局一般采取的策略时：**先用标准流排列上下位置，内部子元素采用浮动排列左右位置**。浮动布局注意事项如下：
+   - 要遵守网页布局第一准则。
+   - 如果一个元素浮动了，其余的兄弟元素也要浮动。
+
+页面布局整体思路：（版心、上下、左右）
+
+1. 确定页面版心（可视区、主体区域）。
+2. 分析页面的上下布局（行模块）。（多个块级元素纵向排列找标准流，多个块级元素横向排列找浮动）
+3. 然后分析左右结构（行模块的列模块）。（列模块经常使用浮动布局，先确定列大小，再确定列位置（网页布局第二准则））
+4. 遵循的逻辑：
+   - 制作HTML结构（遵循先有结构，后有样式）。
+   - 理清楚布局结构再写代码。
+
+**页面编写总结：理清布局，自上向下、自左向右、由整体到局部（由外而内），先结构后样式，一步步进行操作。**
+
+导航栏：实际开发使用li+a的做法。
+
+![](image/nav.png)
+
+## 样式初始化
+
+```css
+/* 有些样式有默认的margin、padding，会影响 */
+* {
+    margin: 0;
+    padding: 0;
+    border-sizing: border-box;
+}
+```
+
+**初始化css模板：**
+
+```css
+* {
+    margin: 0;
+    padding: 0;
+}
+em,i {
+    font-style: normal;
+}
+li {
+    list-style: none;
+}
+img {
+    border: 0;
+    vertical-align: middle;
+}
+button {
+    cursor: pointer;
+}
+a {
+    color: #666;
+    text-decoration: none;
+}
+a:hover {
+    color: #c81623;
+}
+button,input {
+    font-family:Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
+    border: 0;
+    outline: none;
+}
+body{
+    -webkit-font-smoothing:antialiased;
+    background-color:#fff;
+    font:12px/1.5 Microsoft YaHei,Heiti SC,tahoma,arial,Hiragino Sans GB,"\5B8B\4F53",sans-serif;
+	color:#666;
+}
+.hide,.none{
+    display:none;
+}
+.clearfix:after{
+    visibility:hidden;clear:both;display:block;content:".";height:0
+}
+.clearfix{
+    *zoom:1
+}
+```
 
 # 转换、过渡、动画
 
@@ -1317,9 +1359,6 @@ animation-timing-function（动画的速度曲线细节）：
 
   ![](image/逐字显示.png)
 
-
-# 弹性布局与栅格布局
-
 # 弹性布局
 
 ## 弹性容器
@@ -1368,16 +1407,16 @@ flex与inline-flex的区别：声明为flex的元素仍然是块级元素（块�
 | align-self  | 在单个元素上覆盖align-items属性的值                          | 默认值为auto，其余取值和align-items一样                      |
 | flex-grow   | 定义增长因子，即用于定义有多余的空间时是否允许弹性元素增大，<br />以及允许增大且有多余的空间时相对其他同辈元素以什么比例增大。<br />弹性容器的多余空间将按各弹性元素的非零增长因子按比例分配 | 大于或等于0的数字                                            |
 | flex-shrink | 指定缩减的比例                                               | 大于或等于0的数字                                            |
-| flex-basis  | 弹性基准，定义弹性元素的初始或默认尺寸，有值时会覆盖width即使为width加上 !important | auto（初始值）、content、长度值（%、vw、px等）<br />百分比相对容器主轴计算 |
-| flex        | 增长因子、缩减因子、弹性基准的简写形式，如果flex属性没有设定增长因子或缩减因子时这两个值默认为1，如果flex属性没有声明则这两个值都为0。使用flex时弹性基准的默认值是0（**即全部空间按比例分配**给各个弹性元素而不是额外空间按比例分配（auto））。 | `flex: flex-grow flex-shrink flex-basis;`                    |
+| flex-basis  | 弹性基准，定义弹性元素的初始或默认尺寸，<br />有值时会覆盖width即使为width加上 !important | auto（初始值）、content、长度值（%、vw、px等）<br />百分比相对容器主轴计算 |
+| flex        | 增长因子、缩减因子、弹性基准的简写形式。<br />如果flex属性没有设定增长因子或缩减因子时这两个值默认为1，<br />如果没有声明flex属性则这两个值都为0。<br />使用flex属性时弹性基准的默认值是0 | `flex: flex-grow flex-shrink flex-basis;`                    |
 | order       | 修改单个弹性元素的显示顺序，默认所有弹性元素的顺序都是0<br />（仅仅是视觉层面的改变，源码、元素绘制的顺序不会改变） | 大于等于0的整数                                              |
 
 flex属性说明：
 
 1. 规范中建议使用该属性而不使用flex-grow等单个属性。
-2. 如果没有设置宽度和flex-basis，弹性基准默认为auto，设定宽度为auto则弹性基准为content，如果设定了宽度则弹性基准为宽度；如果设定了弹性基准则弹性基准会覆盖掉width。
+2. 如果没有设置宽度和flex-basis，弹性基准默认为auto，设定宽度为auto则弹性基准为content，如果设定了宽度则弹性基准为宽度；如果设定了弹性基准则弹性基准会覆盖掉width。如果使用flex简写属性但没有在属性值里设置弹性基准的值，那么此时弹性基准的值是0。
 3. 缩小：弹性容器宽度不足以装下所有弹性元素时，**`每个弹性元素的缩小的量=元素初始宽度*缩减因子*缩小比例`**，**`缩小比例=缺少的空间/(宽度1*缩减因子1+宽度2*缩减因子2+......)`。**
-4. 增大：基准为auto或具体值时将**额外空间**按比例分配，基准是0%或者0时**全部空间**按比例分配给各个弹性元素。
+4. 增大：弹性基准为auto或具体值时将**额外空间**按比例分配给元素，基准是0%或者0时**全部空间**按比例分配给各个弹性元素。
 
 
 
@@ -1406,6 +1445,19 @@ display: inline-grid;  /* 行内框的栅格容器 */
 1. 栅格轨道：两相邻的栅格线之间夹住的整个区域。
 2. 栅格单元：四条栅格线限定的区域，内部没有其他栅格线贯穿。
 3. 栅格区域：任何四条栅格线限定的区域，由一个或多个栅格单元组成。
+
+| 属性                              | 说明                                                         |
+| --------------------------------- | ------------------------------------------------------------ |
+| grid-template-rows                | 放置横栅格线                                                 |
+| grid-template-columns             | 放置竖栅格线                                                 |
+| grid-template-areas               | 声明具名栅格区域                                             |
+| grid-auto-flow                    | 声明栅格流                                                   |
+| row-gap（~~grid-row-gap~~）       | 设置行间隙（栏距、沟槽，gutter）<br />取值为非负数长度，可以用相对单位 |
+| column-gap（~~grid-column-gap~~） | 设置列间隙（栏距、沟槽，gutter）                             |
+| gap（~~grid-gap~~）               | 设置行、列间隙<br />是上面两个的简写属性，初始值 0 0         |
+| grid                              | 一个简写属性                                                 |
+
+grid 是一个 CSS 简写属性，可以用来设置以下属性： 显式网格属性 grid-template-rows、grid-template-columns 和 grid-template-areas， 隐式网格属性 grid-auto-rows、grid-auto-columns 和 grid-auto-flow， 间距属性 grid-column-gap  和 grid-row-gap。注意简写属性没设置的值都将会重设为默认值，因此一定要把grid声明放在与栅格容器有关的其他声明之前以避免发生意外。
 
 
 
@@ -1555,7 +1607,7 @@ grid-template-areas属性，用于划分栅格容器内的栅格区域，说明�
 
 ## 栅格元素放置
 
-在栅格中附加栅格元素，两种方式：基于栅格线的元素放置、基于栅格区域的元素放置，**栅格元素放置时是可以重叠的**。
+在栅格中指定栅格元素位置，两种方式：基于栅格线的元素放置、基于栅格区域的元素放置，**栅格元素放置时是可以与其他栅格元素重叠的**。如果不指定栅格元素的位置，那么栅格元素将会按顺序一个个填进栅格单元之中。
 
 将元素附加到栅格线上的四种属性：`grid-row-start`、`grid-row-end`、`grid-column-start`、`grid-column-end`，意为将元素的边界附加到某条栅格线上，它们的初始值是auto。用法示例如下：
 
@@ -1846,7 +1898,56 @@ grid-area的：
 3. 可以使用grid-auto-rows和grid-auto-columns属性手动设定隐式网格的大小。
 4. 简单来说，隐式网格就是为了放显式网格放不下的元素，浏览器根据已经定义的显式网格自动生成的网格部分。
 
+| 属性              | 说明                     |
+| ----------------- | ------------------------ |
+| grid-auto-rows    | 设置自动生成的网格的宽度 |
+| grid-auto-columns | 设置自动生成的网格的高度 |
+
+
+
 ## 栅格流
+
+不明确指定栅格元素位置，栅格元素将自动放入栅格单元之中。栅格流——栅格元素在栅格容器之中的放置顺序，通过设置容器的grid-auto-flow属性来设置栅格流。
+
+栅格流的两种模式：
+
+1. `grid-auto-flow: row;`：行优先模式，栅格元素依次排满一行再排下一行，是默认的模式。
+2. `grid-auto-flow: column;`：列优先模式，栅格元素排满一列再排下一列。
+3. `grid-auto-flow: dense;`：密集栅格流，让栅格元素尽量靠紧，而不管顺序会受到什么影响。
+
+## 其他
+
+### 栅格元素与盒模型
+
+元素会在其外边距的边界处附加到栅格单元中。
+
+绝对地位的栅格元素——偏移量相对栅格区域来计算，对栅格无影响。
+
+......还没搞清楚
+
+### 栅格元素对齐
+
+整体对齐设置，基于栅格容器的属性：
+
+| 属性            | 说明 | 属性值 |
+| --------------- | ---- | ------ |
+| justify-items   |      |        |
+| justify-content |      |        |
+| align-items     |      |        |
+| align-content   |      |        |
+
+单个栅格元素对齐设置，基于栅格元素的属性：
+
+| 属性         | 说明 | 属性值 |
+| ------------ | ---- | ------ |
+| justify-self |      |        |
+| align-self   |      |        |
+
+
+
+### 分层和排序
+
+栅格元素按照的是文档源码的顺序叠放，也就是后面声明的元素可以覆盖前面的元素，不过可以使用z-index属性来指定层叠关系。
 
 
 
@@ -1908,21 +2009,21 @@ grid-area的：
 5. 过渡：从一个状态慢慢过渡到另外一个状态。（经常和`:hover`一起搭配使用）
 6. CSS3 2D转换、CSS3 3D转换。
 
-# 单移动端
+# 单移动端页面
 
 ## 概述
 
-移动端开发有单独制作移动端页面和响应式页面两种，目前市场**主流还是单独制作移动端页面**。
+移动端开发方案有单独制作移动端页面和响应式页面两种，目前市场**主流还是单独制作移动端页面**。
 
-视口：
+视口：浏览器显示页面内容的屏幕区域
 
-1. 分为视觉视口（屏幕可视区，所看到的网站的区域）。
-2. 布局视口（移动端浏览器默认设置的布局视口）。
+1. 视觉视口（屏幕可视区，所看到的网站的区域）。（看到的）
+2. 布局视口（移动端浏览器默认设置的一个视口，安卓、iOS一般将这个视口分辨率设置为980px）。（默认设置的）
 3. 理想视口（为了使网站在移动端有最理想的浏览和阅读宽度而设定。设备多宽，布局视口就多宽）。
 
 ![](image/viewport.png)
 
-meta之视口标签及其属性：
+meta之视口标签及其属性：（该标签目的：声明布局视口宽度和理想视口一样，即设备多宽布局视口就多宽）
 
 ```html
 <!-- 标准的viewport设置 -->
@@ -1930,6 +2031,8 @@ meta之视口标签及其属性：
 ```
 
 ![](image/meta视口.png)
+
+物理像素：屏幕显示的最小颗粒。PC端1px等于1个物理像素，移动端则不一定。物理像素比（屏幕像素比）：1px能显示的物理像素点个数。
 
 2倍图：准备好的图片是实际需要的的两倍（再通过缩放引入图片），解决在手机端的图片变模糊的情况，这就是2倍图。（3倍图、四倍图看实际需要）
 
@@ -1956,7 +2059,7 @@ img,a {-webkit-touch-callout: none;}
 
 单独制作移动端页面：（主流）
 
-1. 使用流式布局（百分值布、局）。
+1. 使用流式布局（百分值布局）。
 2. flex弹性布局（推荐）。
 3. less + rem + 媒体查询。
 4. 混合布局。
@@ -1970,140 +2073,118 @@ img,a {-webkit-touch-callout: none;}
 
 ### 流式(百分比)布局
 
-![](image/流式布局.png)
+**需要设定好主体盒子的width（如果不设置宽度，那么百分比则是相对整个浏览器可视窗口），后面的子元素设置为百分值（默认是以父盒子为参考），并且应该设定最大最小宽度，防止尺寸过小或过大引起的布局失效。**
 
-**总结：需要设定好主体盒子的width，后面的子元素设置为百分值时默认以父盒子为参考，并且应该设定最大最小宽度，防止尺寸过小或过大引起的布局失效。**
+总结：
 
+1. 布局主体设置一个宽度（可以在body设置或另外起一个盒子作为主体），可以是固定宽度或者以HTML的宽为参照使用百分比值。
+2. 要注意为主体盒子设置最大最小宽度，子类不设置宽度将默认使用父类的宽度。
+3. 子类不设置宽度将默认是父盒子的宽度。
 
+min-width、max-width、min-height、max-height。
 
-### flex弹性布局
+### 弹性布局
 
-弹性盒：设置`display：flex或inline-flex;`的元素，弹性盒可以是任意元素。
-
-![](image/flexfather.png)
-
-1. flex-direction：row（左到右）、column（上到下）、row-reverse、column-reverse（reverse，反转）；（方向按照语言书写方向会有一个默认值，不同的语言下的网页主轴方向不同，例如中文网页左到右，阿拉伯语言网站右到左）；
-2. justify-content：
-  - flex-start、flex-end：紧靠主轴起边或终边；
-  - center：把子元素当做整体居于主轴中点；
-  - space-between：把第一个和最后一个都紧靠主轴起边或终边，剩余的等空白间隔排序占满剩余行空间；
-  - space-around：减去子元素所占宽度，然后剩余的空间等分给各个元素两侧；（相当于等分为左右margin值）；
-  - space-evenly：等分空间，分布子元素两侧，使得元素与元素、元素与起边或终边的间隔都是相同的；
-3. flex-wrap：wrap（换行）、nowrap（不换行，默认值）；
-4. aligin-items：影响的是垂轴上的对齐，flex-end（下上）、flex-start（上下）、center（垂直居中）、baseline（基线对齐）、stretch（默认，垂直拉伸）；
-5. aligin-content：影响的是垂直方向上的，值比justify-content多一个stretch（垂直拉伸）；
-6. flex-flow：row  wrap；
-
-弹性盒元素：设置为display：flex/inline-flex的元素的子元素。
-
-1. flex：定义当前弹性子元素分配剩余空白空间，值为数值或百分比，意为多少份。
-2. aligin-self：定义**某个**弹性子元素对齐方式，侧轴（垂直）上的对齐方式，与aligin-items的值一致。
-3. order：定义弹性元素排列顺序，数值越小越往前，数值越大离起边越远。
+利用弹性盒特性进行布局，移动端对弹性盒的支持比较好一般不用考虑兼容性。
 
 
 
 ### rem适配布局1
 
-1. 如何使文字随着屏幕大小变化而变化？
-2. 流式布局和flex布局主要针对宽度布局，那高度如何设置？
-3. 如何使屏幕发生变化时元素和高度等比例缩放？
-
-相对单位：
-
-- em：相对于父元素字体大小（font-size）的单位；
-- rem（root em）：相对于HTML元素的字体大小的单位，设置html标签的font-size即可控制其余使用了rem单位的大小；
-
-媒体查询media query：
-
-```css
-@media mediatype and|not|only (media feature) { /* not、only */
-    css样式
-} 
-/* 媒体类型：screen（屏幕，手机、平板、电脑等）、print（打印机）、all（所有） */
-/* 媒体特性： max-width、min-width、width等，这几个指定宽度*/
-```
-
-```css
-@media screen and (max-width: 760px) {
-    当屏幕宽度不大于760px时执行的css样式代码
-}
-/* screen 和 and 不能省略 数值单位不能省略 */
-```
-
-通过媒体查询引入资源：link标签的media属性
-
-```css
-<link rel="stylesheet" media="媒体类型 关键字 (媒体特性)" href=""/>
-
-<link rel="stylesheet" media="screen and (max-width: 320px)" href=""/>
-```
-
-
-
-![](image/css弊端.png)
-
-less的使用：（Leaner Style Sheets，一种CSS拓展语言，CSS预处理器，在现有CSS的基础上加了程序式语言的特性，其他的有Sass、Stylus）。
-
-创建.less文件，less文件里的操作：
-
-1. 创建变量和变量值；![](image/less变量.png)
-
-2. ```less
-   @color: pink;
-   body {
-       color: @color;
-   }
-   div {
-       color: @color;
-   }
-   ```
-
-3. 需要编译成CSS文件，借助vscode的easy插件，安装插件后保存less文件会自动生成相对应的css文件，以后通过less文件就可以控制css文件的值；
-
-4. less嵌套-对应css中的后代选择器
-
-   - ```less
-     div {
-         a {
-             color: red;
-         }
-     }
-     /* 对应 div a {} */
-     ```
-
-   - ![](image/less嵌套1.png) 
-
-5. less的运算：
-
-   1. 数值都可以使用+、-、/、*这些单位，除法运算要加括号()；
-
-   2. 运算符两侧要有空格，任何数字、颜色、变量都可以参与运算；
-
-   3. 两运算的值的单位以第一个为首选，如果第一个没有则用第二个的单位；
-
-   4. ```less
-      @fontsize: 12px;
-      div {
-          width: @fontsize * 2;
-          height: 123rem + 446px;
-      }
-      ```
-   
-6. `@import "common"`：导入common.less文件。
-
-rem适配方案：（思考：适配的目标是？任何去实现？如何在实际开发中使用？）
-
-![](image/rem适配.png)
-
-实际上：![](image/实际适配.png)
-
 技术选择：方案1：less、media、rem；方案2：flexible.js、rem（推荐的方案）。
 
 方案一：
 
-1. 选择屏幕的标准值（例如移动端一般750px），然后划分这个标准值为多少份（具体看设计，15份、20份等等）；
-2. 每一份的大小就作为html元素的font-size值；
+1. 选择屏幕的标准值（例如移动端一般750px），然后划分这个标准值为多少份（具体看设计，15份、20份等等）。
+2. 每一份的大小就作为html元素的font-size值。
 3. 然后根据rem单位就可以实现值的不同，但是实现了等比缩放的效果。
+
+
+
+rem适配布局可以解决以下问题：
+
+1. 如何使文字随着屏幕大小变化而变化？
+2. 流式布局和flex布局主要针对宽度布局，那高度如何设置？
+3. 如何使屏幕发生变化时元素和高度等比例缩放？
+
+rem适配布局总结：就是使用媒体查询来控制html的font-size（font-size大小设置为屏幕像素n等份后的值），其他的元素则使用rem单位来设置大小，实现**不同屏幕下页面元素盒子的等比缩放效果**。
+
+了解相对单位：**（注意rem不能用于max-width、min-width等）**
+
+- em：相对于父元素字体大小（font-size）的单位。
+- rem（root em）：相对于HTML元素的字体大小的单位，设置html标签的font-size即可控制其余使用了rem单位的大小。
+
+屏幕尺寸现在基本以750px为准。
+
+```less
+// 定义不同屏幕下html字体的大小
+html {
+    font-size: 50px;
+}
+
+a {
+    text-decoration: none;
+}
+
+@num: 15;
+@media screen and (min-width: 320px) {
+    html {
+        font-size: (320px / @num);
+    }
+}
+@media screen and (min-width: 360px) {
+    html {
+        font-size: (360px / @num);
+    }
+}
+@media screen and (min-width: 375px) {
+    html {
+        font-size: (375px / @num);
+    }
+}
+@media screen and (min-width: 384px) {
+    html {
+        font-size: (384px / @num);
+    }
+}
+@media screen and (min-width: 400px) {
+    html {
+        font-size: (400px / @num);
+    }
+}
+@media screen and (min-width: 414px) {
+    html {
+        font-size: (414px / @num);
+    }
+}
+@media screen and (min-width: 424px) {
+    html {
+        font-size: (424px / @num);
+    }
+}
+@media screen and (min-width: 480px) {
+    html {
+        font-size: (480px / @num);
+    }
+}
+@media screen and (min-width: 540px) {
+    html {
+        font-size: (540px / @num);
+    }
+}
+@media screen and (min-width: 720px) {
+    html {
+        font-size: (720px / @num);
+    }
+}
+@media screen and (min-width: 750px) {
+    html {
+        font-size: (750px / @num);
+    }
+}
+```
+
+
 
 ### rem适配布局2
 
@@ -2116,8 +2197,6 @@ vscode的cssrem插件，可以自动将px值转为rem值（需要进入设置里
 ![](image/cssrem.png)
 
 
-
-### 混合布局
 
 # 响应式页面
 
@@ -2215,33 +2294,60 @@ bootstrap将页面划分为12列。
 6. `div.xxx$*5`
 7. `div{$*5}`
 
+# Less
 
+**CSS预处理语言：**
 
+![](image/css弊端.png)
 
+less的使用：（Leaner Style Sheets，一种CSS拓展语言，CSS预处理器，在现有CSS的基础上加了程序式语言的特性，其他的有Sass、Stylus）。
 
+创建.less文件，less文件里的操作：
 
+1. 创建变量和变量值；![](image/less变量.png)
 
+2. ```less
+   @color: pink;
+   body {
+       color: @color;
+   }
+   div {
+       color: @color;
+   }
+   ```
 
+3. 需要编译成CSS文件，借助vscode的easy less插件，安装插件后保存less文件会自动生成相对应的css文件，以后通过less文件就可以控制css文件的值；
 
+4. less嵌套-对应css中的后代选择器
 
+   - ```less
+     div {
+         a {
+             color: red;
+         }
+     }
+     /* 对应 div a {} */
+     ```
 
+   - ![](image/less嵌套1.png) 
 
+5. less的运算：
 
+   1. 数值都可以使用+、-、/、*这些单位，除法运算要加括号()；
 
+   2. 运算符两侧要有空格，任何数字、颜色、变量都可以参与运算；
 
+   3. 两运算的值的单位以第一个为首选，如果第一个没有则用第二个的单位；
 
+   4. ```less
+      @fontsize: 12px;
+      div {
+          width: @fontsize * 2;
+          height: 123rem + 446px;
+      }
+      ```
 
-
-
-
-
-
-
-
-
-
-
-
+6. `@import "common"`：在.less文件中导入common.less文件。
 
 
 

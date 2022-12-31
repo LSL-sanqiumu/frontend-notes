@@ -40,8 +40,8 @@ JavaScript（网景公司）、Jscript（微软），JavaScript最流行。ECMAS
 
 ## 注释
 
-1. 单行注释：`//`。（快捷键：`ctrl + /`）
-2. 多行注释：`/*  */`。（快捷键：shift + alt + a）
+1. 单行注释：`//`。（VScode快捷键：`ctrl + /`）
+2. 多行注释：`/*  */`。（VScode快捷键：shift + alt + a）
 
 ## 输入输出
 
@@ -110,6 +110,8 @@ alert(b); // b是全局变量
 alert(window.b);
 alert(a); // 出错，a只在函数作用域内有效
 ```
+
+6、全局作用域下不使用关键字声明的变量，也将是window对象的属性。
 
 
 

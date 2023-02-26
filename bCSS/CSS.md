@@ -12,12 +12,23 @@
 
 内部样式：head标签内的style标签里的css样式。
 
+```css
+<style>
+	@import url();   /* @import使用见文档 */
+</style>
+```
+
 内联样式（行内样式）：标签内通过style属性来设置元素的样式。
 
 ```html
 <!-- 标签图片引入 -->
 <link rel="shortcut icon" href="https://www.bilibili.com/favicon.ico?v=1">
 ```
+
+href和src：
+
+1. href——Hypertext Reference，超文本引用，指向网络资源所在位置，作用是确立文档与引用资源的联系。遇到herf会并行下载资源并且不影响对当前文档的处理。（所以建议使用link引入CSS而不是通过@import引入）
+2. src——source，资源，将资源下载下来到HTML文档中并替换，用于替换当前内容。当解析到src会暂停其他资源的下载和处理，直到将资源加载完毕或执行完毕。（所以建议js引入放在末尾）
 
 ## 选择器
 
@@ -73,6 +84,8 @@ h1 {
 注意：ID选择符不能串在一起使用，因为ID属性值不能是以空格分隔的列表，其他和类选择符基本一致。
 
 ### 属性选择器
+
+属性选择器：`[xxx]`，常与元素选择器配合使用。
 
 **简单属性选择器：**只确认到某个或多个属性本身
 
@@ -291,7 +304,36 @@ h2:after {
 
 应用场景：通过伪元素来实现字体图标、在图像链接上添加半透明黑幕、用于清除浮动等。
 
-**【注意】创建的是元素内部的内容的前置或后置元素。**
+**【注意】创建的是指定元素的内部内容的前置或后置元素。**示例如下：
+
+```css
+div span::before {
+    content: "前置";
+}
+div span::after {
+    content: "后置";
+}
+```
+
+```html
+<div>
+    <span>你好</span>
+</div>
+```
+
+上述的伪元素的位置如下：
+
+```html
+<div>
+    <span>
+        ::before   <!-- 前置元素 -->
+        你好
+        ::after    <!-- 后置元素 -->
+    </span>
+</div>
+```
+
+
 
 ## 字体
 
@@ -391,36 +433,65 @@ img、input、td，同时具有块元素和行内元素的一些特点：
 
 ## 背景
 
-背景颜色：background-color：transparent（透明的）或颜色值。
+1、背景颜色：
 
-背景图片：background-image：url()。
+- background-color：transparent（透明的）或颜色值。
+- css3，ie9+才支持：背景色半透明：`background-color：rgba(0, 0, 0, .8);`，a是alpha。
 
-背景平铺：background-repeat：repeat（默认）、no-repeat、repeat-x、repeat-y。
+2、背景图片：
 
-背景位置：background-position：x y。
+- background-image：url()。
+- background-image: linear-gradient();，渐变背景。
 
-- x坐标、y坐标，x和y可以使用精确单位或方位名词（top、bottom、right、left、center），如果只指定一个方位名词，另一个忽略，此时忽略的是默认居中。
+3、背景平铺：background-repeat：repeat（默认）、no-repeat、repeat-x、repeat-y。
+
+4、背景固定：background-attachment：scroll（随内容滚动，默认）、fixed（背景固定）。
+
+5、背景位置：background-position：x y。
+
+- x坐标、y坐标，x和y可以使用精确单位或方位名词（top、bottom、right、left、center），如果只指定一个方位名词，另一个忽略，此时忽略的那一个是默认居中。
 - 如果是精确单位，第一个一定是x坐标，第二个一定是y坐标。
 - 如果只指定一个数值，那么这个数值一定是x坐标，另一个默认center。
 - 如果精确单位和方位名词混合使用，第一个一定是x坐标，第二个一定是y坐标。
+- 如果不设置，那么默认为0%、0%。
 
-背景大小：background-size，值为关键字（cover、contain、auto）或数值（百分比、em、px等）。
+6、背景大小：background-size，值为关键字（cover、contain、auto）或数值（单位是百分比、em、px等）。
 
 - `background-size: 一个值;`，值指定图片的宽度，图片的高度隐式的为 auto 。
 - `background-size: 值1 值2;`，第一个值指定图片的宽度，第二个值指定图片的高度。
 - `background-size: 值1, 值2;`，设置多重背景的图片大小
 
-背景固定：background-attachment：scroll（随内容滚动，默认）、fixed（背景固定）。
+复合写法示例：
 
 ```css
 /* 复合写法 */
-background：背景颜色 背景图片地址 背景平铺 背景图像滚动 背景图片位置;
-background：背景颜色 背景图片地址 背景平铺 背景图像滚动 背景图片位置/背景大小;
+background: 背景颜色 背景图片地址 背景平铺 背景图像滚动 背景图片位置;
+background: 背景颜色 背景图片地址 背景平铺 背景图像滚动 背景图片位置/背景大小;
 /* 示例：background: color image repeat position/size */
-background：red url() no-repeat scroll center center/400px 400px;
+background: red url() no-repeat scroll center center/400px 400px;
+background: red url() no-repeat scroll center/400px;
+background: url() no-repeat scroll center top/100% 400px;
 ```
 
-css3，ie9+才支持：背景色半透明：`background-color：rgba(0, 0, 0, .8);`，a是alpha。
+
+
+## 长度单位
+
+常用绝对单位：px，像素。
+
+相对单位：（有参考标准，相对于参考标准的多少倍）
+
+| 单位 | 说明                                                         |
+| ---- | ------------------------------------------------------------ |
+| em   | 在 font-size 中使用是相对于父元素的字体大小，在其他属性中使用是相对于自身的字体大小，如 width |
+| rem  | 相对根元素的字体大小，即相对于html元素的font-size            |
+| vw   | 视窗宽度的 1%                                                |
+| vh   | 视窗高度的 1%                                                |
+| vmin | 视窗较小尺寸的 1%                                            |
+| vmax | 视图大尺寸的 1%                                              |
+| ex   | 字符“x”的高度                                                |
+| ch   | 数字“0”的宽度                                                |
+| lh   | 元素的 line-height                                           |
 
 
 
@@ -433,7 +504,7 @@ css3，ie9+才支持：背景色半透明：`background-color：rgba(0, 0, 0, .8
 如果选择器相同（特指度相同），那就是层叠；选择器不同时则根据权重判断，权重大的将会覆盖权重小的。各选择器权重如下：
 
 - 通配符*：`0,0,0,0`；继承或者连结符（>、+等）是没有特指度的，连0都没有。
-- 元素选择器：`0,0,0,1`。
+- 元素选择器、伪元素选择器：`0,0,0,1`。
 - 类、属性选择、伪类选择器：`0,0,1,0`。
 - ID选择器：`0,1,0,0`。
 - 行内样式style=""：`1,0,0,0`。
@@ -442,6 +513,16 @@ css3，ie9+才支持：背景色半透明：`background-color：rgba(0, 0, 0, .8
 复合选择器的权重叠加：权重会叠加但不会有进位，权重比较是从左往右一个个数对应比较。
 
 `0,0,1,1`大于`0,0,0,1`，`0,0,1,0`大于`0,0,0,13`，以此类推。
+
+
+
+### 层叠性
+
+层叠性主要解决样式冲突问题，相同选择器设置相同的样式（值不同），此时一个样式就会覆盖另一个冲突的样式。（相同权重的样式会发生覆盖）
+
+重叠性原则：就近原则，哪个离body结构近哪个就执行，注意**只是覆盖冲突的样式，并不是全部覆盖**。（如果是不同css文件中的样式起冲突呢？一般都不会出现不同文件下的样式冲突，因为样式文件都对应一个结构）。
+
+
 
 ### 继承性
 
@@ -474,18 +555,6 @@ border、大多数盒模型属性不会被继承；**text-、font-、line-这些
 - 光标属性：cursor
 
 
-
-### 层叠性
-
-层叠性主要解决样式冲突问题，相同选择器设置相同的样式（值不同），此时一个样式就会覆盖另一个冲突的样式。（相同权重的样式会发生覆盖）
-
-重叠性原则：就近原则，哪个离body结构近哪个就执行，注意**只是覆盖冲突的样式，并不是全部覆盖**。（如果是不同css文件中的样式起冲突呢？一般都不会出现不同文件下的样式冲突，因为样式文件都对应一个结构）。
-
----
-
-**css样式优先级是：**浏览器缺省 < 外部样式表（引入的css文件） < 内部样式表（`<style>`标签内的样式） < 内联（行内）样式（标签中style属性声明的样式）。
-
-完整的优先级：浏览器缺省 < 外部样式表(css文件) < 外部样式表类选择器 < 外部样式表类派生选择器 < 外部样式表ID选择器 < 外部样式表ID派生选择器 < 内部样式表(`<style>`标签内的样式) < 内部样式表类选择器 < 内部样式表类派生选择器 < 内部样式表ID选择器 < 内部样式表ID派生选择器 < 内联样式(style=”)；共12个优先级。
 
 
 
@@ -604,8 +673,8 @@ CSS3新增盒子阴影：`box-shadow：h-shadow v-shadow blur spread color inset
 1. html元素的宽与高取决于浏览器的宽高。html元素是块级元素，根据块级元素的性质，html默认宽度是占一行的，也就是浏览器窗口的宽度。**如果没给html设置高度，那么默认的高度就是有它里面包含的内容高度所决定的**，如果给html设置了`height:100%`，那么它的高度就是浏览器窗口的高度。
 2. html元素默认设置了`overflow:auto`的css样式，在需要的时候就会显示滚动条。也就是它里面的内容高度超过了浏览器窗口的高度，不管html有没有加上高度，都会出现滚动条。
 3. body元素默认的定位是position:static，基于 **设置了定位的元素是参考该元素最近的、且设置了非static定位属性的父元素来定位 **的原则，那么所有定位子元素（父元素没设置定位属性）的定位都是相对于html元素的坐标系统。
-4. body相对于html元素，因此将body的宽度设置为百分比值时将是相对于html的宽度——即浏览器可视区域宽度。
-5. 在几乎所有的现代浏览器中，页面跟浏览器窗口的偏移量是通过给body元素设置margin属性，而不是给html元素设置padding属性。我给html设置了padding也是起作用的。
+4. body相对于html元素，因此将body的宽度设置为百分比值时将是相对于html的宽度——即浏览器可视区域宽度，高度也同理。
+5. 在几乎所有的现代浏览器中，页面跟浏览器窗口的偏移量是通过给body元素设置margin属性，而不是给html元素设置padding属性。但给html设置了padding也是起作用的。
 6. 如果不设置html元素的背景色，那么body的背景色将会传递给根节点，此时整个页面背景色都将是body设置的背景色的颜色。
 
 
@@ -615,6 +684,8 @@ CSS3新增盒子阴影：`box-shadow：h-shadow v-shadow blur spread color inset
 ### 概述
 
 标准流（文档标准流）：简单来说标准流就是浏览器按照各种元素标签排版布局中默认的状态，浏览器在渲染代码的时候是从左往右、从上到下开始渲染，元素也是从左往右、从上往下的流式排列。（也就是没有被其他排版浮动和定位相关的CSS属性干扰的就叫标准流，**块级元素无论宽有没有一行的长度都会独占一行**）。
+
+> **float: left | right;**
 
 **浮动元素特性：**脱离文档流、浮动的盒子不再保留原来的位置、浮动元素一行中显示且顶端对齐、具有行内块特性。
 
@@ -627,15 +698,21 @@ CSS3新增盒子阴影：`box-shadow：h-shadow v-shadow blur spread color inset
 
 ### 清除浮动
 
-**清除浮动：**（清除浮动对父元素的影响）
+> **clear: left | right | both;**
+
+清除浮动——清除浮动对父元素的影响：
 
 - 清除浮动的本质就是清除浮动元素造成的影响，为了解决**父元素因为子级元素浮动引起的内部高度为0的问题**；因此如果父元素有高度就不需要清除。
 - 清除浮动后，父元素就会根据浮动的子盒子自动检测高度。（清除元素的左浮动，那就会根据左浮动盒子来检测高度，其他同理）
 - 清除浮动的策略是闭合浮动，就是让父盒子闭合出口和入口，不让子盒子出来。
 
-清除浮动的方法：
+清除浮动造成的影响的方法：
 
-1. 额外标签法（隔墙法），W3C推荐的做法：在最后一个浮动的元素的后面添加一个清除了浮动的块级元素。（不常用）
+1. 给父元素添加高度，或者也将父元素浮动。
+
+2. 父级添加overflow属性，将其属性值设为hidden、auto或scroll。（代码简单但无法显示溢出的部分）（较常用）
+
+3. 额外标签法（隔墙法），W3C推荐的做法：在最后一个浮动的元素的后面添加一个清除了浮动的块级元素。（不常用）
 
    ```html
    style {
@@ -650,14 +727,10 @@ CSS3新增盒子阴影：`box-shadow：h-shadow v-shadow blur spread color inset
    </div>
    ```
 
-   
-
-2. 父级添加overflow属性，将其属性值设为hidden、auto或scroll。（代码简单但无法显示溢出的部分）（较常用）
-
-3. 父级添加after伪元素（额外标签法的升级版）。（没有增加标签，结构更简单，但需要考虑版本兼容）（推荐使用）
+4. 父级添加after伪元素（额外标签法的升级版）。（没有增加标签，结构更简单，但需要考虑版本兼容）（推荐使用）
 
    ```css
-   .clearfix:after {	
+   .clearfix::after {	
    	content: "";
    	display: block;
    	height: 0;
@@ -669,17 +742,15 @@ CSS3新增盒子阴影：`box-shadow：h-shadow v-shadow blur spread color inset
    }
    ```
 
-   
-
-4. 父级添加双伪元素。（推荐使用）
+5. 父级添加双伪元素。（推荐使用）
 
    ```css
-   .clearfix:before, 
-   .clearfix:after {	
+   .clearfix::before, 
+   .clearfix::after {	
    	content: "";
    	display: table;
    }
-   .clearfix:after {	
+   .clearfix::after {	
    	clear: both;
    }
    .clearfix {   /* IE6、7 专用 */
@@ -687,14 +758,18 @@ CSS3新增盒子阴影：`box-shadow：h-shadow v-shadow blur spread color inset
    }
    ```
 
+   
+
 ## BFC
+
+[块格式化上下文 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/orphaned/Web/Guide/CSS/Block_formatting_context)
 
 **概念：**BFC（Block Formatting Context），块格式化上下文，指一个独立的渲染区域，或者说是一个隔离的独立容器。（一个独立的封闭空间，不会影响到其外面的内容。）
 
 可以形成BFC的元素有：
 
 1. 浮动元素，float；
-2. 绝对定位元素，position；
+2. 绝对定位元素，固定定位的元素；
 3. 元素的display为（inline-block、table-cell、table-caption、flex）中的一个；
 4. 元素的overflow除visible以外的值（hidden、auto、scroll）；
 5. 根元素body；html。
@@ -1147,9 +1222,11 @@ css属性值需要用到引号时，统一使用单引号。
 }
 ```
 
-# PC端
+# PC端页面
 
 ## PC布局
+
+**页面编写总结：理清布局、确认主体，自上向下、自左向右、由整体到局部（由外而内），先结构后样式，一步步进行操作。**
 
 基本布局模式：页面布局的三大核心：盒子模型、浮动、定位；网页布局的本质就是用CSS摆放盒子（把盒子摆放到相应位置）。CSS提供了三种传统的布局方式（简单地说就是盒子的排列顺序是咋样的），实际开发中一个页面都包含这三种布局（移动端中还有新的布局方式）：
 
@@ -1177,7 +1254,7 @@ css属性值需要用到引号时，统一使用单引号。
    - 制作HTML结构（遵循先有结构，后有样式）。
    - 理清楚布局结构再写代码。
 
-**页面编写总结：理清布局，自上向下、自左向右、由整体到局部（由外而内），先结构后样式，一步步进行操作。**
+**页面编写总结：理清布局、确认主体，自上向下、自左向右、由整体到局部（由外而内），先结构后样式，一步步进行操作。**
 
 导航栏：实际开发使用li+a的做法。
 
@@ -1194,7 +1271,7 @@ css属性值需要用到引号时，统一使用单引号。
 }
 ```
 
-**初始化css模板：**
+**初始化css模板示例：**
 
 ```css
 * {
@@ -1358,6 +1435,31 @@ animation-timing-function（动画的速度曲线细节）：
 - 可以实现一个字一个字显示出来：
 
   ![](image/逐字显示.png)
+
+```html
+<style>
+    div {
+        overflow: hidden;
+        font-size: 20px;
+        font-weight: 500;
+        width: 0;
+        height: 30px;
+        background-color: pink;
+        /* 文字强制一行内显示 */
+        white-space: nowrap;
+        /* 分几步完成动画，有steps()不能再用ease、linear */
+        animation: w 4s steps(10) forwards; 
+    }
+    @keyframes w {
+        0% {
+            width: 0;
+        }
+        100% {
+            width: 200px;
+        }
+    }
+</style>
+```
 
 # 弹性布局
 
@@ -1949,19 +2051,15 @@ grid-area的：
 
 栅格元素按照的是文档源码的顺序叠放，也就是后面声明的元素可以覆盖前面的元素，不过可以使用z-index属性来指定层叠关系。
 
+# HTML5
 
-
-# HTML5和CSS3
-
-## HTML5新增
-
-### 新增语义化标签
+## 新增语义化标签
 
 新增特性都有兼容性问题，IE9+才支持。HTML5新增语义化标签：header——头部标签、nav——导航标签、article——内容标签、section——定义文档某个区域、aside——侧边栏标签、footer——尾部标签。
 
 ![](image/html5-tag.png)
 
-### 新增的多媒体标签
+## 新增的多媒体标签
 
 视频：
 
@@ -1979,7 +2077,7 @@ grid-area的：
 
 ![](image/audio.png)
 
-### 新增表单相关
+## 新增表单相关
 
 新增的input类型：
 
@@ -2000,7 +2098,7 @@ grid-area的：
 
 ![](image/html5-form.png)
 
-## CSS3新增
+# CSS3
 
 1. 新增选择器：属性选择器、结构伪类选择器、伪元素选择器。
 2. 盒子模型样式设置——`box-sizing`。
@@ -2009,7 +2107,7 @@ grid-area的：
 5. 过渡：从一个状态慢慢过渡到另外一个状态。（经常和`:hover`一起搭配使用）
 6. CSS3 2D转换、CSS3 3D转换。
 
-# 单移动端页面
+# 移动端页面
 
 ## 概述
 
@@ -2294,11 +2392,15 @@ bootstrap将页面划分为12列。
 6. `div.xxx$*5`
 7. `div{$*5}`
 
-# Less
 
-**CSS预处理语言：**
+
+# 预处理语言
+
+CSS预处理语言：
 
 ![](image/css弊端.png)
+
+## Less
 
 less的使用：（Leaner Style Sheets，一种CSS拓展语言，CSS预处理器，在现有CSS的基础上加了程序式语言的特性，其他的有Sass、Stylus）。
 
@@ -2316,7 +2418,7 @@ less的使用：（Leaner Style Sheets，一种CSS拓展语言，CSS预处理器
    }
    ```
 
-3. 需要编译成CSS文件，借助vscode的easy less插件，安装插件后保存less文件会自动生成相对应的css文件，以后通过less文件就可以控制css文件的值；
+3. 需要编译成CSS文件，得借助vscode的easy less插件，安装插件后保存less文件会自动生成相对应的css文件，以后通过less文件就可以控制css文件的值；
 
 4. less嵌套-对应css中的后代选择器
 
@@ -2351,3 +2453,4 @@ less的使用：（Leaner Style Sheets，一种CSS拓展语言，CSS预处理器
 
 
 
+## Sass

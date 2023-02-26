@@ -1,8 +1,6 @@
-# JavaScript
+# JavaScript概述
 
 [JavaScript 教程 - 网道 (wangdoc.com)](https://wangdoc.com/javascript/)
-
-# 概述
 
 JavaScript：运行在客户端（浏览器）的编程语言，实现人机交互效果。主要用于网页特效、表单验证、数据交互（获取后台数据渲染到前端）。JavaScript是一种解释型语言。
 
@@ -19,7 +17,9 @@ JavaScript：运行在客户端（浏览器）的编程语言，实现人机交�
 
 JavaScript（网景公司）、Jscript（微软），JavaScript最流行。ECMAScript规定了JS编程的基本语法和基础核心知识，是所有厂商共同遵守的一套JS语法工业标准。
 
-## 引入位置
+## start
+
+### 引入位置
 
 三种引入JavaScript的方式，内嵌式、外部JS引入、行内(内联)JS。（执行顺序：外部 > 内嵌 > 行内(内联)）。
 
@@ -34,16 +34,20 @@ JavaScript（网景公司）、Jscript（微软），JavaScript最流行。ECMAS
 
 ![](img/import.png)
 
- ![](img/行内JS.png)
+关于行内js：
+
+1. 将单行或者少量JS代码写在HTML标签的事件属性中，例如事件属性onclick等。
+2. 建议：HTML中使用双引号，JS中使用单引号。
+3. 行内JS可读性差，大量JS代码时不方便阅读。
 
 
 
-## 注释
+### 注释
 
 1. 单行注释：`//`。（VScode快捷键：`ctrl + /`）
 2. 多行注释：`/*  */`。（VScode快捷键：shift + alt + a）
 
-## 输入输出
+### 输入输出
 
 ![](img/input_output.png)
 
@@ -172,6 +176,7 @@ JavaScript的数据类型：
 | BigInt    | 任意大小整数                 |                                                              |
 | String    | 不可变字符，Unicode字符      |                                                              |
 | Symbol    | ES6新增                      |                                                              |
+| Object    |                              |                                                              |
 
 **Object、function、数组是引用数据类型。**
 
@@ -202,7 +207,7 @@ JavaScript的数据类型：
 1. `Number(..)`：转换为数值型。
 2. `parseInt(..)、parseInt(xxx, 进制)`：转换为数值型的整型。
 3. `parseFloat(..)`：转换为数值型的浮点型，只解析十进制值。
-4. `-、*、/`，这些运算符，在运算时会对不是数值的转换为数值。
+4. `-、*、/、++、--`，这些运算符，在运算时会对不是数值的转换为数值。
 5. 字符转换为数字型，会根据前面的进行转换，直到遇到不能转换的就终止转换。如`var num = parseInt('123aaa123px');`最终结果是数字型的123，如果`var num = parseInt(a123);`则是NaN；如果使用`parseInt()`转换`'12.94'`之类的字符，会去掉小数位。
 
 ```js
@@ -262,20 +267,176 @@ console.log(typeof Boolean(flag));
 
 ![](img/转换为布尔.png)
 
-### 检测数据类型
+### typeof
 
 ```js
 var name = '陆拾陆';
 alert(typeof name);   // 未声明的变量的类型为undefined
 ```
 
+typeof返回值：undefined、boolean、string、number、object、function、symbol。
+
+### Undefined类型
+
+使用var或者let声明了变量但没有初始化时，就相当于给变量赋予了undefined值。
+
+注意：未声明的变量使用typeof判断返回的也是undefined，但这并不表示这个未声明的变量存在这个默认值。
 
 
-## 运算符
 
-### 数值运算符
+### Null类型
 
-> +加、-减、*乘、/除、%取余
+Null类型只有一个值——null，逻辑上null值表示一个空指针，也就是说给typeof传一个null返回的将是object。
+
+undefined 值是由 null 值派生而来的，因此 ECMA-262 将它们定义为表面上相等，如下面的例子所示：
+
+```js
+console.log(null == undefined);  //  true
+// ==操作符会转换其操作数
+```
+
+
+
+### Symbol类型
+
+Symbol（符号）类型，符号实例是唯一的、不可变的，其用于确保对象属性的唯一性，避免发生属性冲突。符号类型变量用于对象属性，以确保对象属性的唯一性，即只需要创建Symbol实例，并将其作为对象的新属性，就可以保证它不会覆盖已有的对象属性，无论是符号属性还是字符串属性。
+
+1、创建符号：无论如何创建，创建的符号实例都是不相同的。
+
+```javascript
+let sym1 = Symbol();
+let sym2 = Symbol('sym');
+console.log(sym2);   //  输出：Symbol(sym)
+let sym3 = Symbol();
+let sym4 = Symbol('sym');
+console.log(sym1 == sym3);  // false
+console.log(sym2 == sym4);  // false
+```
+
+创建符号实例不能使用new关键字，这是为了避免创建符号包装对象。如果想使用符号包装对象，可以这样做：
+
+```javascript
+let mySym = Symbol();
+let myWrappedSym = Object(mySym);
+```
+
+2、全局的符号实例：
+
+应用场景：运行时的不同部分需要共享和重用符号实例。
+
+操作——用字符串为键，在全局符号注册表中创建并重用符号：
+
+```javascript
+let fooGlobalSym = Symbol.for('foo');            // 创建新符号
+let otherFooGlobalSym = Symbol.for('foo');       // 重用已建符号
+console.log(fooGlobalSym == otherFooGlobalSym);  // true，如果合Symbol('foo')的比较仍然不会相等
+//  使用Symbol.for()，会对每个字符串键都执行幂等操作
+// 1.第一次使用某个字符串调用，会检查全局运行时注册表，如果不存在对应符号，则生成新符号实例添加到这个表中
+// 2.后续使用相同的字符串调用，会检查这个表，发现存在于该字符串对应的就返回
+```
+
+全局注册表中的符号必须使用字符串键来创建，因此作为参数传给 Symbol.for()的任何值都会被转换为字符串。  
+
+```javascript
+// 注册表中使用的键同时也用作符号描述
+let globalSym = Symbol.for();
+let fooGlobalSym = Symbol.for('foo');
+console.log(globalSym);      // 输出：Symbol(undefined)
+console.log(fooGlobalSym);   // 输出：Symbol(foo)
+```
+
+全局注册表查询——Symbol.keyFor()：
+
+```javascript
+let sym = Symbol();
+let globalSym = Symbol.for();
+let fooGlobalSym = Symbol.for('foo');
+console.log(Symbol.keyFor(globalSym));      // 输出：undefined
+console.log(Symbol.keyFor(fooGlobalSym));   // 输出：foo
+console.log(Symbol.keyFor(sym));    // 输入普通符号，输出：undefined
+```
+
+3、使用符号作为对象属性：凡是可以使用字符串或数值作为属性的地方，都可以使用符号，这就包括了对象字面量属性和Object.defineProperty()/Object.defineProperties()定义的属性。  （对象字面量只能在计算属性语法中使用符号作为属性。  ）
+
+```javascript
+// 创建符号实例
+let sym1 = Symbol('sym1');
+let sym2 = Symbol('sym2');
+let sym3 = Symbol('sym3');
+let sym4 = Symbol('sym4');
+// 使用符号作为对象属性
+let obj = {
+    sym1 : 'sym1 value'
+}
+// let obj[sym1] = 'sum1 value';
+console.log(obj);  // 输出：{sym1: 'sym1 value'}
+Object.defineProperty(obj, sym2, {value: 'sym2 value'});
+console.log(obj);  //输出：{sym1: 'sym1 value', Symbol(sym2): 'sym2 value'}
+Object.defineProperties(obj, {
+	[sym3]: {value: 'sym3 value'},
+	[sym4]: {value: 'sym4 value'}
+});
+console.log(obj);  // 输出：{sym1: 'sym1 value', Symbol(sym2): 'sym2 value', Symbol(sym3): 'sym3 value', Symbol(sym4): 'sym4 value'}
+
+/* 取值 */
+console.log(obj[sym1]);
+console.log(obj.sym2);
+```
+
+四个方法：
+
+1. Object.getOwnPropertyNames()  ：返回对象实例的常规属性数组。
+2. Object.getOwnPropertySymbols()  ：返回对象实例的符号属性数组，与Object.getOwnPropertyNames()互斥。
+3. Object.getOwnPropertyDescriptors()  ：返回同时包含常规和符号属性描述符的对象。
+4. Reflect.ownKeys() ：返回常规属性、符号属性的键的数组。  
+
+补充：符号属性是对内存中符号的一个引用，比如上面的obj对象的符号属性sym1，因为显式地保存了符号的引用——`let sym1 = Symbol('sym1 value')`，因此这个符号不会丢失。但是如果没有显式地保存符号的引用，那就得遍历对象的所有符号属性才能找到相应的属性键：
+
+```javascript
+let obj = {
+    [Symbol('sym1')] : 'sym1 value',
+    [Symbol('sym2')] : 'sym2 value'
+};
+console.log(obj);
+// 找到对应的属性键
+let sym2 = Object.getOwnPropertySymbols(obj).find((symbol) => symbol.toString().match(/sym2/));
+console.log(sym2);
+console.log(obj[sym2]);
+```
+
+
+
+4、常用内置符号：
+
+5、Symbol的一些属性：
+
+
+
+
+
+### Object类型
+
+类似于Java中的java.lang.Object，是所有对象的基类，其所有属性和方法在其派生类对象上也存在。
+
+```javascript
+let obj = new Object();
+```
+
+Object实例的属性和方法：（任何对象都有的）
+
+1. constructor，构造器，是用于创建当前对象的一个函数，例如Object()函数。
+2. hasOwnProperty(propertyName)：用于判断当前对象实例（不是原型）上是否存在给定的属性。要检查的属性名必须是字符串（如 o.hasOwnProperty("name")）或符号。isPrototypeOf(object)：用于判断当前对象是否为另一个对象的原型。（第 8 章将详细介绍原型。）
+3. propertyIsEnumerable(propertyName)：用于判断给定的属性是否可以使用 for-in 语句枚举。与 hasOwnProperty()一样，属性名必须是字符串。
+4. toLocaleString()：返回对象的字符串表示，该字符串反映对象所在的本地化执行环境。toString()：返回对象的字符串表示。
+5. valueOf()：返回对象对应的字符串、数值或布尔值表示。通常与 toString()的返回值相同。  
+
+
+
+## 操作符
+
+### 数值操作符
+
+> +加、-减、*乘、/除、%取余、**指数
 
 **【注意】浮点数的计算会有些精度问题，不要直接判断两个浮点数是否相等！**
 
@@ -290,18 +451,31 @@ console.log(0.07 * 00); // 7.000000000000001
 2. 加减法：有NaN，则返回NaN；与字符相加相当于字符拼接；与字符相减会在后台将字符串转换为数值（不是纯数字的字符不能转换为数值，与这样的字符进行运算最终只会是NaN），再进行减法操作。
    - undefined与除字符串之外的相加都是NaN，undefined + 字符串=undefined字符串。
 
+```javascript
+let num = 16 ** 0.5;
+let n = 16;
+let n **= 0.5;
+```
 
-### 赋值运算符
+
+
+
+
+
+### 赋值操作符
 
 > =、+=、-=、*=、/=、%=、<<=、>>=、>>>=   
 
 复合赋值运算符仅仅是简化写法，不会提升性能。
 
-### 一元运算符
 
-1. +、-：一元加和减：其可以用来进行数据类型转换，用于变量前，相当于使用Number()函数。（例`var num = "01"; var n = -num;`）
-2. ++、--。
-3. !。
+
+### 一元操作符
+
+只操作一个值的操作符。
+
+1. +、-，一元加和减：其可以用来进行数据类型转换，用于变量前，相当于使用Number()函数。（例`var num = "01"; var n = -num;`）
+2. ++、--：自增、自减，也会触发隐式数据类型转换。
 
 
 
@@ -311,13 +485,13 @@ console.log(0.07 * 00); // 7.000000000000001
 
 
 
-### 比较运算符
+### 比较操作符
 
-在JavaScript中，比较运算符会**自动转换类型**进行比较：`==、>=、<=、>、<`、`!==`（不相等）。
+在JavaScript中，比较运算符会**自动转换类型**进行比较：`==、>=、<=、>、<`、`!=`（不相等）。
 
 ![](img/==.png)
 
-建议使用`===`而不是`==`。
+建议使用`===`而不是`==`，使用`!==`（不全等，判断值和类型）而不是`!=`。
 
 `>=、<=、>、<`、==：
 
@@ -325,9 +499,12 @@ console.log(0.07 * 00); // 7.000000000000001
 2. 操作数都是字符则逐个比较字符串对应字符编码，直到比较出结果。
 3. 某一个是数值，则将另一个转换为数值再进行比较。
 4. 某一个是对象，则调用`valueOf()`方法（没有该方法则调用toString()方法）取得结果后再根据以上规则来比较。
-5. 布尔值都将转换为数值。
+5. 布尔值都将转换为数值来比较。
 
-### 逻辑运算符
+| null == undefined  <br>"NaN" == NaN<br/>  5 == NaN<br/>  NaN == NaN  <br/>NaN != NaN  <br/>false == 0  <br/>true == 1  <br/>true == 2 <br/> undefined == 0 <br/> null == 0  <br/>"5" == 5 | true <br/>false <br/>false <br/>false <br/>true<br/> true <br/>true<br/> false <br/>false <br/>false <br/>true |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+
+### 逻辑操作符
 
 1. 逻辑非：`!`先将值转为布尔值再取反；js中可以使用`!!`，给出变量真正对应的布尔值。
 2. 逻辑与：`&&`，短路与，与Java中使用一致，不过在js中特殊的地方在于——如果有操作数不是布尔值，那么就不一定返回布尔值了：
@@ -342,29 +519,46 @@ console.log(0.07 * 00); // 7.000000000000001
    4. 两个操作数都是null、NaN、或undefined，则返回它们自身。
 4. 总结：无论是`&&`还是`||`，运算结果都是最后被执行的那个表达式，符合短路条件时不会再执行后面的内容。
 
-### 位运算符
+### 位操作符
 
-位运算：JavaScript中所有的数值都以64位格式存储；位操作符则是先把值转换为32位整数，再进行位操作，之后再把结果转换为64位。对于我们开发者而言，只需考虑32位即可。位操作符运用到非数值，会先使用Number()函数，然后再进行位操作。操作符书写和Java中的一致。
+位运算：JavaScript中所有的数值都以64位格式存储；位操作符则是先把值转换为32位整数，再进行位操作，之后再把结果转换为64位。对于我们开发者而言，**只需考虑32位即可**。位操作符运用到非数值，会先使用Number()函数，然后再进行位操作。
 
-与、或、非、异或（同假异真）。
+位操作是用于数值底层操作的。正数的原码、反码、补码都一样；负数的原码符号位不变其余取反后得到反码，反码低位加1得到补码。
 
-左移、右移、无符号右移
+与（&，全真则真）、或（|，有真则真）、非（~，取反）、异或（^，同假异真）。
+
+- 左移<<：符号位保留，空位都用0补。
+- 有符号右移>>：符号位保留，空位用符号位的来补。
+- 无符号右移>>>：都往右移（包括符号位），空位都用0补。（正数的和有符号右移一样，负数的将相差特别大）
 
 
 
-### 运算符优先级
+### 操作符优先级
 
 ![](img/优先级.png)
 
 
 
-## 循环与判断语句
+## 语句
 
 if语句、while语句、do...while语句、for语句和Java基本一致。
 
-for循环有一特殊之处，那就是**设置循环变量的那部分是一个父作用域，而循环体内部是一个单独的子作用域**。
+for循环有一特殊之处，那就是**设置循环变量的那部分是一个父作用域，而循环体内部是一个单独的子作用域**。（具体细节见ES6）
 
-JavaScript中switch语句可以使用所有的类型。
+JavaScript中switch语句可以使用所有的类型，并且条件判断中可以使用表达式：
+
+```javascript
+switch(value){
+    case value or expression :
+        statment
+        break;
+    case value or expression :
+        statment
+        break;
+    default:    // 上面匹配不上就执行default里面的语句
+        statment
+}
+```
 
 **for-in语句——用于枚举对象中非符号键属性：**
 
@@ -390,10 +584,29 @@ for (const el of [2,4,6,8,10]){
 - `continue`：跳出本次循环，执行下一次。
 - `break`：跳出整个循环。
 
-with语句——将代码作用域设置为特定的对象：
+```javascript
+s: for(let i = 0; i < 10; i++){
+    if(i===5){
+        console.log('结束，i的当前值为' + i);
+        break s;
+    }
+}
+```
 
-```java
+with语句——将代码作用域设置为特定的对象：（严格模式下不能使用，并且不推荐使用with，简单了解一下）
 
+```javascript
+/* 读取location对象的属性 */
+let qs = location.search.substring(1);
+let hostName = location.hostname;
+let url = location.href;
+/*   */
+with(location) {
+    // 每个变量都先被认为是一个局部变量，如果没有找到这些局部变量，则去location对象里面找
+    let qs = search.substring(1);
+    let hostName = hostname;
+    let url = href;
+}
 ```
 
 
@@ -432,7 +645,7 @@ array.length = 10; // 更改数组长度来扩容，扩出来的位置默认是 
 
 
 
-## 函数
+## 函数入门
 
 执行特定任务的代码块。
 
@@ -694,7 +907,7 @@ console.log(foo); // 输出 '此时会覆盖它-那个与我同名的函数'
 
 同时声明多个函数名相同的函数，先声明的会被后声明的覆盖。
 
-## 对象
+## 对象入门
 
 ### 对象声明与调用
 
@@ -1085,19 +1298,17 @@ Web API，由浏览器提供的一套操作浏览器功能和页面元素的API�
 
 ![](img/dom.png)
 
-## 节点与节点操作
-
-### Node类型节点
-
 任何的HTML、XML文档都可以用DOM表示为由节点构成的层级结构，文档中所有的内容（标签、属性、文本、注释等）都是节点。节点共有12种类型，每种类型都对应着文档中的某一项内容，例如元素节点对应HTML文档的标签、属性节点表示属性。
 
 根节点为document，其唯一直接子节点是html元素，即documentElement。
 
-#### 节点基本属性
+## Node类型节点
+
+### 节点公共属性
 
 Node接口是所有节点都必须实现的，因此所有节点都共享相同的基本属性和方法，基本的共同属性如下：
 
-1. 每个节点都有nodeType属性，其值由Node接口定义的12个数值常量表示，常用的三个如下：
+1. 节点类型：每个节点都有nodeType属性，其值由Node接口定义的12个数值常量表示，常用的三个如下：
 
    - 元素节点：Node.ELEMENT_NODE = 1。
    - 属性节点：Node.ATTRIBUTE_NODE = 2。
@@ -1112,7 +1323,7 @@ Node接口是所有节点都必须实现的，因此所有节点都共享相同�
 
    
 
-2. nodeName、nodeValue属性，具体值取决于节点类型，对于元素节点，前者是标签名，后者始终为null。
+2. 节点名称：nodeName、nodeValue属性，具体值取决于节点类型，对于元素节点，前者是标签名，后者始终为null。
 
    ```js
    if (document.documentElement.nodeType === Node.ELEMENT_NODE) {
@@ -1121,10 +1332,13 @@ Node接口是所有节点都必须实现的，因此所有节点都共享相同�
    }
    ```
 
-3. 表节点关系的属性：childNodes、parentNode、firstChild、lastChild、nextSibling、previousSibling，都是只读。
+3. 节点关系：children、childNodes、parentNode、firstChild、lastChild、firstElementChild、lastElementChild、nextSibling、previousSibling，都是只读。
 
    - childNodes：使用伪数组NodeList存储节点，该属性包含指定节点对象的所有的子节点（文本节点、元素节点等）；除了通过下标的方式获取子节点对象外还可以通过其`item(n)`方法来获取。
    - 将childNodes的NodeList转为数组的方法：`Array.prototype.slice()`、ES6的`Array.from(xxx.childNodes)`。
+   - children属性是获取节点的全部子元素节点。
+   - firstChild、lastChild指节点的第一个或最后一个字节点，firstElementChild、lastElementChild指节点的第一个或最后一个元素节点。
+   - nextSibling、previousSibling是指childNodes的列表中的某个节点的前一个或者后一个节点。
    - 某节点对象只有一个子节点时nextSibling、previousSibling都是null，而此时firstChild、lastChild指向同一个节点。
    - `hasChildNodes()`：如果返回true，则存在一个或多个子节点。
    - parent——返回父节点；children——返回全部直接子元素节点。
@@ -1143,27 +1357,29 @@ Node接口是所有节点都必须实现的，因此所有节点都共享相同�
 
 5. ownerDocument属性。
 
-#### 节点基本操作
+### 节点公共操作
 
-添加与替换节点：
+**获取节点引用：**见Document类型节点中的获取节点引用。
+
+**添加与替换节点：**
 
 1. `appendChild(newNode)`：添加一个新节点，会在childNodes列表末尾添加上节点；对于把已经存在的节点传给该函数，因为DOM中一个节点在同一文档中不会同时出现在两个或更多个地方，因此此时相当于把已经存在的节点移动到childNodes列表末尾。
 2. `insertBefore(newNode, someNode)`：插入到某个节点前，第一个参数为要插入的节点，第二个为参照节点；如果参照节点为null，则此时该方法与`appendChild(newNode)`效果一致。
 3. `replaceChild(newNode, someNode)`：用newNode替换掉someNode，被替换的将从文档树中移除。
 
-移除节点：
+**移除节点：**
 
 - `removeChild(someNode)`：移除someNode节点，移除后文档中不再有该节点的位置，该节点及其内部全部都将在DOM树消失。
 
-复制节点：
+**复制节点：**
 
 - `cloneNode()`：返回与调用该方法的节点一模一样的节点。传入参数为true——深复制，复制节点及其整个子DOM树；传入false——只复制调用该方法的节点，不会复制该节点的子DOM树。
 
-处理文本节点：
+**处理文本节点：**
 
 - `normalize()`：处理文档子树中的文本节点，会检查节点的所有后代，如果发现空文本节点就会将其删除，如果发现文本节点之间互为同胞关系则进行合并成一个文本节点。
 
-### Document类型节点
+## Document类型节点
 
 HTMLDocument继承了Document，document则是HTMLDocument的实例。
 
@@ -1172,9 +1388,7 @@ HTMLDocument继承了Document，document则是HTMLDocument的实例。
 - `nodeType=9`；`nodeName='#document'`；nodeValue、parentNode、ownerNode都为null。
 - 只有一个子节点：html。
 
-#### 获取特殊节点
-
-**document的使用：**
+### 获取特殊节点
 
 1. 获取html元素节点：`document.documentElement`。
 2. 获取body元素节点：`document.body`。
@@ -1183,7 +1397,7 @@ HTMLDocument继承了Document，document则是HTMLDocument的实例。
    2. 获取页面URL相关信息：`document.URL`——当前页面完整的url；`document.domain`——当前页面的域名；`document.referrer`——页面来源。
       - 可以对域名信息进行修改，但必须设置为URL中有的值，而且对`document.domain`一旦放松就不能再收紧。
 
-#### 获取节点引用
+### 获取节点引用
 
 **获取元素节点的引用：**（也可以通过元素节点调用，只不过是在该节点内进行搜索）
 
@@ -1264,7 +1478,7 @@ var all = document.querySelectorAll('div');
 var all = document.querySelectorAll('ul li');
 ```
 
-#### 特殊集合
+### 特殊集合
 
 document对象的几个特殊集合，这些集合都是HTMLCollection的实例。
 
@@ -1273,7 +1487,7 @@ document对象的几个特殊集合，这些集合都是HTMLCollection的实例�
 3. `document.images`：文档中所有的img元素（返回结果和`getElementByTagName('img')`一样）。
 4. `document.links`：文档中所有带href属性的a元素。
 
-#### 文档写入
+### 文档写入
 
 向文档写入内容，写入在body标签中：
 
@@ -1281,7 +1495,7 @@ document对象的几个特殊集合，这些集合都是HTMLCollection的实例�
 2. `document.writeln(string参数)`：会在字符串末尾追加一个换行符`\n`。
 3. 注意：如果在页面加载完成后再进行写入，会重写整个页面，原来的内容将会被写入的都代替掉。
 
-### Element类型节点
+## Element类型节点
 
 Element，表示HTML或XML元素，其nodeType=1、nodeName=标签名、nodeValue为null。
 
@@ -1301,11 +1515,11 @@ let div = document.getElementById('mydiv');
 console.log(div.title);
 ```
 
-#### 获取元素节点
+### 获取元素节点
 
 见Document类型中的获取节点引用。
 
-#### 操作元素属性
+### 操作元素属性
 
 元素的属性都是元素节点对象的属性。
 
@@ -1322,7 +1536,7 @@ console.log(div.title);
 3. `setNamedItem(node)`：添加新的Attr节点。
 4. `item(index)`：返回某处节点。
 
-#### 自定义元素的属性
+### 自定义元素的属性
 
 ![](img/自定义属性.png)
 
@@ -1345,7 +1559,7 @@ console.log(div.title);
 
 
 
-#### 修改元素中的HTML内容
+### 修改元素中的HTML内容
 
 元素内容的对应属性：
 
@@ -1378,7 +1592,7 @@ console.log(div.title);
 
 
 
-#### 创建元素
+### 创建元素
 
 ```js
 document.createElement('标签名'); // 创建某个元素
@@ -1411,7 +1625,7 @@ document.createElement('标签名'); // 创建某个元素
 </html>
 ```
 
-#### 操作元素样式
+### 操作元素样式
 
 ![](img/修改样式.png)
 
@@ -1464,11 +1678,9 @@ document.createElement('标签名'); // 创建某个元素
 </body>
 ```
 
+## 不常用节点
 
-
-
-
-### Text类型节点
+### Text类型
 
 文本节点——nodeType=3、nodeName='#text'、nodeValue的值为其内容。文本节点的data属性和nodeValue值一致。
 
@@ -1491,7 +1703,7 @@ normalize()方法的使用——合并文本节点：在相邻文本节点的父
 
 splitTest(偏移量)：指定偏移量来将一个文本节点拆分成两个文本节点，常用于从文本节点中提取数据的DOM解析技术。
 
-### Comment类型节点
+### Comment类型
 
 Comment，注释的节点类型，其nodeType=8、nodeValue=注释内容、nodeName='#comment'。
 
@@ -1499,11 +1711,11 @@ Comment类型与Text类型都继承自同一个基类——CharacterData，有�
 
 创建注释节点：`document.createComent(内容)`。
 
-### DocumentType类型节点
+### DocumentType类型
 
 DocumentType——包含文档类型信息。
 
-### Attr类型节点
+### Attr类型
 
 属性节点不被认为是DOM树的一部分。推荐使用操作属性的方法来操作属性而不是直接使用属性节点来操作属性。
 
@@ -1538,9 +1750,9 @@ Attr对象的三个属性：name——属性名、value——属性值、specifi
 </body>
 ```
 
-## DOM重点核心
+## DOM学习重点
 
-针对元素的操作，增、删、改、查、属性操作、事件操作。
+针对元素的操作，增、删、改、获取、属性操作、事件操作。
 
 # 事件
 
@@ -2910,6 +3122,28 @@ function animate(obj, target,callback){
 
 
 ## 常用开发框架
+
+
+
+# 变量、作用域、内存
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

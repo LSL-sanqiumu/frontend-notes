@@ -152,6 +152,43 @@ alert(a); // 出错，a只在函数作用域内有效
 2. 变量的名称一般用名词。
 3. 函数的名称一般用动词。
 
+### 变量、作用域、内存
+
+原始值和引用值：
+
+- 原始值——最基本的数据，6种原始值：Undefined、 Null、 Boolean、 Number、 String 和 Symbol  。
+- 引用值——对象，JavaScript不允许直接访问内存位置，操作对象时实际操作的是对象的引用而非对象本身，通过引用间接操作对象本身。
+
+动态属性：对于引用值而言，可以随时添加、修改和删除其属性和方法。
+
+ 值的复制：
+
+- 原始值赋予另一个变量，是复制一份给这个变量。
+- 引用值从一个变量赋给另一个变量，复制的是指针，这样两个变量都指向同一个对象。
+
+函数参数传递：ECMAScript 中函数的参数就是局部变量。J函数参数传参中只有值传递，没有引用传递，都是将值拷贝一份给函数的参数，对象传入也是拷贝一份指针。
+
+类型判断：
+
+typeof用于判断字符串、数值、布尔值或 undefined 这些类型好使，判断null那返回的就是object。
+
+对应判断对象类型的，使用instanceof：
+
+```javascript
+let obj = new Object();
+console.log(obj instanceof Object);  // true
+```
+
+上下文和作用域：
+
+
+
+链接回收：
+
+
+
+
+
 ## 数据类型
 
 不同的数据所需要占用的存储空间不同，为了充分利用存储空间，把数据分成所需内存大小不同的数据，于是就定义了不同的数据类型。
@@ -611,7 +648,7 @@ with(location) {
 
 
 
-## 数组
+## 数组入门
 
 数组创建方式：（数组内可以放任意的数据类型数据，下标从0开始）
 
@@ -911,6 +948,8 @@ console.log(foo); // 输出 '此时会覆盖它-那个与我同名的函数'
 
 ### 对象声明与调用
 
+前两种创建的都是Object对象。
+
 **创建对象方式一：**通过字面量创建对象
 
 ```html
@@ -1027,7 +1066,7 @@ for (const stuKey in stu) {
 
 JavaScript的三种对象：自定义对象、内置对象、浏览器对象。
 
-内置对象：JavaScript自带的对象，对象含有常用的或基本而必要功能（属性和方法），例如Math、Date、Array、String。
+内置对象：JavaScript自带的对象，对象含有常用的或基本而必要功能（属性和方法），例如Math、Date、Array、String、Object、Global。
 
 MDN文档查看：[JavaScript 标准内置对象 - JavaScript | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects)。
 
@@ -1276,6 +1315,10 @@ JavaScript提供了三个特殊的引用类型：String、Boolean、Number。基
 
 ![](img/e1.png)
 
+
+
+
+
 ## 类型总结
 
 简单数据类型（也叫基本数据类型）：string、number、boolean、undefined、null。
@@ -1289,6 +1332,659 @@ JavaScript提供了三个特殊的引用类型：String、Boolean、Number。基
 - 存储变量时存储的仅仅是地址（引用）。
 
 ![](img/堆和栈.png)
+
+
+
+# 引用类型
+
+Date、Math见对象入门。包装类见原始数据类型。
+
+## RegExp类型
+
+正则表达式的应用场景有哪些？
+
+通过RegExp类型来支持正则表达式。
+
+```javascript
+// 使用类似 Perl 的简洁语法来创建，通过字面量定义
+let exp = /pattern/flags;
+// 匹配第一个"bat"或"cat"，忽略大小写
+let pattern1 = /[bc]at/i;
+```
+
+pattern：简单或复杂的正则表达式。
+
+flags：标记，控制正则表达式行为
+
+1. g：全局模式，表示查找字符串的全部内容，而不是找到第一个匹配的内容就结束。  
+2. i：不区分大小写，表示在查找匹配时忽略 pattern 和字符串的大小写。  
+3. m：多行模式，表示查找到一行文本末尾时会继续查找。  
+4. y：粘附模式，表示只查找从 lastIndex 开始及之后的字符串。  
+5. u：Unicode 模式，启用 Unicode 匹配。  
+6. s：dotAll 模式，表示元字符.匹配任何字符（包括\n 或\r）。  
+
+```javascript
+// 通过RegExp定义
+let pattern2 = new RegExp("[bc]at", "i");
+```
+
+
+
+## Global对象
+
+Global是一个单例内置对象，在全局作用域中定义的变量和函数都会变成 Global 对象的属性。isNaN()、 isFinite()、 parseInt()和 parseFloat()等，实际上都是 Global 对象的方法 。其他的Global对象方法如下。
+
+1、URI编码方法：使用 URI 编码方法来编码 URI 可以让浏览器能够理解它们，同时又以特殊的 UTF-8 编码替换掉所有无效字符。  
+
+- encodeURI()  ：不会编码属于 URL 组件的特殊字符，比如冒号、斜杠、问号、井号，只会将空格替换为%20。  
+- encodeURIComponent()  ：会编码所有非标准字符。
+
+```javascript
+let uri = 'https://www.ilyd.top value.js#start';
+// 输出：https://www.ilyd.top%20value.js#start
+console.log(encodeURI(uri));
+// 输出：https%3A%2F%2Fwww.ilyd.top%20value.js%23start
+console.log(encodeURIComponent(uri));
+```
+
+解码方法：
+
+- decodeURI()：将%20替换回空格。
+- decodeURIComponent()  ：解码所有被encodeURIComponent()编码的字符。
+
+```javascript
+let uri = 'https%3A%2F%2Fwww.ilyd.top%20value.js%23start';
+console.log(decodeURI(uri));
+console.log(decodeURIComponent(uri));
+```
+
+2、eval()方法：一个完整的 ECMAScript 解释器，接收字符串参数并解析成实际的 ECMAScript 语句，然后将其插入到该位置。
+
+```javascript
+eval("console.log('这是一个eval方法解析后执行的结果')");
+```
+
+3、Global对象的属性：undefined、NaN等等等。
+
+4、window对象：没有规定直接访问Global对象的方式，但window对象的实现为Global对象的代理。因此，所有全局作用域声明的变量、函数都成了window对象的属性。
+
+获取 Global 对象的方式是使用如下的代码：
+
+```javascript
+let global = function() {
+	return this;
+}();  
+```
+
+
+
+## 集合引用类型
+
+### Object
+
+见对象入门。
+
+适合存储和应用程序间交互数据。
+
+使用字面量创建对象并不会调用Object的构造器。
+
+### Array
+
+JavaScript中的数组：有序的、可存储任意数据类型数据、数组长度是动态的。
+
+1、数组创建：
+
+```javascript
+// 通过构造器创建
+let arr1 = new Array();
+let arr2 = new Array(10);
+let arr2 = new Array('1','2','3');
+
+```
+
+```javascript
+// 通过数组字面量创建（与对象一样，使用字面量创建不会调用构造器）
+let arr1 = [];
+let arr2 = [1,2,3];
+```
+
+```javascript
+// 通过静态方法创建
+// Array.from()：将类数组结构转换为数组实例
+let arr1 = Array.from('Matt'); // ['M','a','t','t']
+// Array.of()：将一组参数转换为数组实例
+let arr2 = Array.of(1,2,3,4);  // [1,2,3,4]
+```
+
+2、数组空位：尽量避免使用，可显式地用undefined代替
+
+```javascript
+let arr = [,,,];   // 创建包含三个空位的数组，ES6之后这些空位有值——undefined   
+```
+
+3、数组索引：
+
+```javascript
+let arr = [1,2,3,4];
+arr[0];
+arr.length;   //  这个属性代表着数组长度，改变这个值数组长度也跟着改变，数组长度最大为2^32-1（即4294967295）
+```
+
+4、数组检测：使用instanceof或者Array.isArray()可以判断一个对象是不是数组。
+
+```javascript
+let arr = [];
+console.log(Array.isArray(arr)); // true
+```
+
+5、数组的迭代器方法：（ES6）
+
+- keys()：返回数组索引的迭代器。  
+- values()：数组元素的迭代器。
+- entries()  ：返回索引/值对的迭代器。
+
+```javascript
+const arr = ["foo", "bar", "baz", "qux"];
+const aKeys = Array.from(arr.keys());
+const aValues = Array.from(arr.values());
+const aEntries = Array.from(arr.entries());
+
+console.log(aKeys);    // [0, 1, 2, 3]
+console.log(aValues);  // ['foo', 'bar', 'baz', 'qux']
+console.log(aEntries); // [[0, "foo"], [1, "bar"], [2, "baz"], [3, "qux"]]
+// 解构赋值
+for (const [idx, element] of a.entries()) {
+	alert(idx);
+	alert(element);
+}
+```
+
+6、复制和填充方法：批量复制方法 copyWithin()，以及填充数组方法 fill()  （ES6新增）
+
+```javascript
+let arr = [1,2,3,4,5];
+arr.fill(0);        // 全部用0替换掉  结果：[0,0,0,0,0]
+//ar、r.fill(0,1,3);    // 索引在[1,3)区间的都用0替换掉   结果：[1,0,0,4,5]
+//arr.fill(0,-3,-1);  // 索引在[1,3)区间的都替换掉，负号可以看成是指倒数   结果：[1,2,0,0,5]
+```
+
+```js
+let arr = [1,2,3,4,5,6,7,8,9];
+arr.copyWithin(5);     // [1,2,3,4,5,1,2,3,4]，从0开始复制并将复制的从索引5开始放进去
+//arr.copyWithin(0,5); // [6,7,8,9,5,6,7,8,9]，从索引5开始复制并从索引0开始放进去
+//arr.copyWithin(4,0,3); // [1, 2, 3, 4, 1, 2, 3, 8, 9]，复制[0,3)的并从索引4	开始放进去
+```
+
+注意：这两个方法都不会改变数组的长度。
+
+7、数组的字符串表示：
+
+```javascript
+let arr = ['red', 'green', 'blue'];
+console.log(arr.toString());   // 返回string类型的：red,green,blue
+console.log(arr.valueOf());    // 返回的是object类型的：['red', 'green', 'blue']
+alert(arr.valueOf());          // alert期待的是字符串，所以后台会调用toString，最终返回的是：red,green,blue
+console.log(arr.toLocaleString()); // red,green,blue
+```
+
+调用数组的toLocaleString()时，会调用数组的每个值的toLocaleString()。
+
+所以对象都有toLocaleString()、 toString()和 valueOf()方法  。
+
+8、栈方法：push()、pop()，以实现类似栈的行为
+
+- push()：接收任意数量的参数，并将它们添加到数组末尾，返回数组的最新长度。  
+- pop()：删除数组的最后一项，同时减少数组的 length 值，返回被删除的项  。
+
+9、队列方法：shift()、unshift
+
+- shift()：删除数组的第一项并返回它，然后数组长度减 1  。
+- unshift()：在数组开头添加任意多个值，然后返回新的数组长度。  
+
+shift()和push()组合将数组当成队列来使用。
+
+10、排序方法：
+
+- reverse()：将数组元素反向排列。
+- sort()：默认按照数组数值的字符串形式重新排序，可以传入一个比较函数来决定哪个值排在前面。
+
+```javascript
+function compare(value1, value2) {
+    if (value1 < value2) {
+        return -1;
+    } else if (value1 > value2) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+let values = [0, 1, 5, 10, 15];
+values.sort(compare);
+alert(values); // 0,1,5,10,15
+
+//此外，这个比较函数还可简写为一个箭头函数：
+let values = [0, 1, 5, 10, 15];
+values.sort((a, b) => a < b ? 1 : a > b ? -1 : 0);
+alert(values); // 15,10,5,1,0
+```
+
+reverse()和 sort()都返回调用它们的数组的引用。  
+
+11、操作方法：
+
+1. concat(xxx, xxxx, ....)：创建一个调用它的数组的副本，然后在这副本后插入其参数值（如果参数值是数组也把元素一个个插入），最后返回一个新数组。
+2. slice(xxx, xxx)：创建一个包含原数组的一个或多个元素的新数组。可以接收一个或两个参数：开始索引和结束索引。 相当于截取数组元素并返回一个新数组，截取的不包括结束索引所指定的。 
+3. splice()：可以用于删除、插入、替换操作。
+   - 删除：传入两个参数，第一个是要删除的第一个元素的位置，第二个是要删除的元素的数量。
+   - 插入：传入三个参，开始位置、 0（要删除的元素数量）和要插入的元素  。
+   - 替换：传入三个参数，开始位置、要删除元素的数量和要插入的任意多个元素  。
+
+```javascript
+let arr1 = [3,3,3,3,3,3];
+arr1.splice(0,2);     // 从0开始删除2个
+arr1.splice(3,0,0);   // 从3开始，删除0个，插入一个0
+arr1.splice(3,1,1,2,3,4); // 从3开始，删除一个，插入1，2，3，4
+```
+
+
+
+12、搜索：
+
+严格相等的搜索方法： i
+
+- indexOf(xxx)：从头开始检索，找到就返回索引位置，没找到就返回-1。
+- lastIndexOf(xxx)：从尾部开始检索，找到就返回索引位置，没找到就返回-1。
+- includes(xxx)：返回布尔值，表示是否找到匹配的项。
+
+```javascript
+let arr = [1,2,3,4,5,4,6,7,8,9];
+arr.indexOf(4);        // 3
+arr.indexOf(4, 4);     // 5
+arr.lastIndexOf(4);    // 5
+arr.lastIndexOf(4, 4); // 3
+arr.includes(9);       // true
+arr.includes(3,9);     // false
+```
+
+断言函数：find()和 findIndex()方法使用了断言函数。  断言函数接收 3 个参数：元素、索引和数组本身。  
+
+- find()：返回第一个匹配的元素。
+- findIndex()：返回第一个匹配的元素的索引。
+
+```javascript
+const people = [
+    {
+        name: "Matt",
+        age: 27
+    },
+    {
+        name: "Nicholas",
+        age: 29
+    }
+];
+// {name: "Matt", age: 27}
+console.log(people.find((element, index, array) => element.age < 28)); 
+// 0
+console.log(people.findIndex((element, index, array) => element.age < 28));
+```
+
+
+
+13、迭代方法
+
+5 个迭代方法如下：（这些方法都不改变调用它们的数组  ）
+
+- every()： 对数组每一项都运行传入的函数，如果对每一项函数都返回 true， 则这个方法返回 true。（元素是否都符合某个条件）
+- filter()：对数组每一项都运行传入的函数，函数返回 true 的项会组成数组之后返回。（筛选满足特定条件的元素）
+- forEach()：对数组每一项都运行传入的函数，没有返回值。（相当于for循环遍历数组）
+- map()：对数组每一项都运行传入的函数，返回由每次函数调用的结果构成的数组。（非常适合创建与原数组一一对应的新数组）
+- some()：对数组每一项都运行传入的函数，如果有一项函数返回 true，则这个方法返回 true。（是否存在符合某个条件的元素）
+
+```javascript
+let arr = [1,2,3,4,5,6,7,8,9];
+let v1 = arr.every((item,index,array) => item > 2); // false，数组所有的元素都大于2才会返回true
+let v2 = arr.some((item,index,array) => item > 2);  // true，数组有元素大于2就会返回true
+// [3, 4, 5, 6, 7, 8, 9]，返回一个所有元素都大于2的新数组
+let v3 = arr.filter((item,index,array) => item > 2);  // 把大于2的元素筛选出来
+console.log(v3);
+let v4 = arr.map((item,index,array) => item * 2);
+console.log(v4);
+arr.forEach((item,index,array) => {
+    console.log(item);
+});
+```
+
+
+
+14、归并方法
+
+reduce()和 reduceRight()。这两个方法都会迭代数组的所有项，并在此基础上构建一个最终返回值。 reduce()方法从数组第一项开始遍历到最后一项。而 reduceRight()从最后一项开始遍历至第一项。  
+
+```javascript
+let arr = [1, 2, 3, 4, 5];
+/*第一次执行归并函数时， prev 是 1， cur 是 2，index 是 1。
+  第二次执行时， prev 是 3（ 1 + 2的值）， cur 是 3（数组第三项），index 是 2。
+  如此递进，直到把所有项都遍历一次，最后返回归并结果。
+*/
+let sum = arr.reduce((prev, cur, index, array) => prev + cur);
+alert(sum); // 15
+```
+
+prev——上一个归并值，cur——当前项，index——当前项的索引，array——数组本身。  
+
+reduceRight()类似，只是方向相反：
+
+```javascript
+let arr = [1, 2, 3, 4, 5];
+/*第一次执行归并函数时， prev 是 5， cur 是 4，index 是 3。
+  第二次执行时， prev 是 9（ 5 + 4的值）， cur 是 3（数组第三项），index 是 2。
+  如此递进，直到把所有项都遍历一次，最后返回归并结果。
+*/
+let sum = arr.reduceRight((prev, cur, index, array) => prev + cur);
+alert(sum); // 15
+```
+
+
+
+### 定型数组
+
+定型数组：特殊的包含数值类型的数组，其存在的目的是为了提升向原生库传输数据的效率。
+
+
+
+
+
+### Map
+
+1、Map集合的创建和初始化：（可以使用任何类型作为键）
+
+```javascript
+const m = new Map();
+const m1 = new Map([
+    ['key1','value1'],['key2','value2'],['key3','value3']
+]);
+// 使用自定义迭代器初始化映射
+const m2 = new Map({
+    [Symbol.iterator] : function*() {
+        yield ["key1", "val1"];
+        yield ["key2", "val2"];
+        yield ["key3", "val3"];
+    }
+});
+```
+
+基本方法：set()、get()、has()、delete()、clear()。
+
+```javascript
+const m = new Map([
+    ['name','名人堂'],['age',12],['like','playing']
+]);
+m.get('name');  // 获取name键的值
+m.has('age');   // 是否存在age键
+m.set('address','北京');  //  往m添加一个键值对，或者修改键值对的值
+m.clear();      // 清空
+m.delete('like');  // 删除某个键值对
+console.log(m.size); // 大小
+
+m.set('k1','v1').set('k2','v2'); // set()方法返回映射实例，
+```
+
+2、顺序与迭代 
+
+Map中键值对的顺序由插入顺序决定。Map实例有一个迭代器，这个迭代器能以[key, value]的形式生成数组：
+
+```javascript
+const m = new Map([
+    ['k1','v1'],['k2','v2'],['k3','v3']
+]);
+console.log(m.entries === m[Symbol.iterator]); // true
+// 通过m.entries()获取迭代器
+for(let i of m.entries()){
+    console.log(i);
+}
+/* 输出：
+   ['k1', 'v1']
+   ['k2', 'v2']
+   ['k3', 'v3']
+*/
+for(let i of m[Symbol.iterator]()){
+    console.log(i);
+}
+// 使用扩展操作，把映射转换为数组
+console.log([...m]);
+```
+
+通过回调方式迭代：
+
+```javascript
+const m = new Map([
+    ['k1','v1'],['k2','v2'],['k3','v3']
+]);
+m.forEach((val, key) => console.log(`${key} -> ${val}`));
+```
+
+keys()和 values()函数，分别返回以插入顺序生成键和值的迭代器：  
+
+```javascript
+const m = new Map([
+    ['k1','v1'],['k2','v2'],['k3','v3']
+]);
+for (let key of m.keys()) {
+	console.log(key);
+}
+for (let val of m.values()) {
+	console.log(val);
+}
+```
+
+注意：键的原始值不能被修改，
+
+```javascript
+const m = new Map([
+    ['k1','v1'],['k2','v2'],['k3','v3']
+]);
+for (let key of m.keys()) {
+    key = 'newKey';    //  不会影响到映射中的键
+	console.log(key);
+}
+console.log(m);   // 仍然是初始化的键与值
+```
+
+```javascript
+const m = new Map([
+    [{id:1},'v1']
+]);
+for (let key of m.keys()) {
+    key.id = 'newKey';    //  键位对象，可以修改到这个对象的属性，但不能修改对象本身
+}
+console.log(m);   // [{id:'newKey'},'v1']
+```
+
+Object与Map：
+
+- 给定固定大小的内存， Map 大约可以比 Object 多存储 50%的键/值对。  
+- 向 Object 和 Map 中插入新键/值对的消耗大致相当，不过插入 Map 在所有浏览器中一般会稍微快一点儿。如果代码涉及大量插入操作，那么显然 Map 的性能更佳。
+- 与插入不同，从大型 Object 和 Map 中查找键/值对的性能差异极小，但如果只包含少量键/值对，则 Object 有时候速度更快。如果代码涉及大量查找操作，那么某些情况下可能选择 Object 更好一些。  
+-   对大多数浏览器引擎来说， Map 的 delete()操作都比插入和查找更快。如果代码涉及大量删除操作，那么毫无疑问应该选择 Map。使用 delete 删除 Object 属性的性能没那么好。  
+
+
+
+### WeakMap
+
+ES6新增的类型，WeakMap 中的“weak”（弱），描述的是 JavaScript 垃圾回收程序对待“弱映射”中键的方式。  
+
+WeakMap的键只能是Object 或者继承自 Object 的类型，否则就会抛出TypeError，值的类型则没有限制。
+
+```javascript
+const k1 = {id : 1};
+const k2 = {id : 2};
+const wm = new WeakMap([
+    [k1,'v1'],[k2,v2]
+]);
+```
+
+其方法是Map的子集，set()、get()、has()、delete()的使用同理。（没有clear()方法）
+
+弱键：WeakMap中，如果其有的键没有被引用，那么这些键值就会被垃圾回收。
+
+```javascript
+const wm = new WeakMap();
+const k1 = {id:1};
+wm.set({},'v');  // 键的对象没有被引用，执行完毕后会被回收
+```
+
+不可迭代键：因为 WeakMap 中的键/值对任何时候都可能被销毁，所以没必要提供迭代其键/值对的能力。  
+
+WeakMap的使用：私有变量和DOM节点元数据。（先跳过）
+
+
+
+### Set
+
+单列集合，可以包含如何数据类型作为值。
+
+1、Set的初始化：
+
+```javascript
+const s = new Set();
+const s1 = new Set(['v1','v2','v3']);
+// 使用自定义迭代器初始化集合
+const s2 = new Set({
+    [Symbol.iterator]: function*() {
+        yield "val1";
+        yield "val2";
+        yield "val3";
+    }
+});
+```
+
+方法：add()、has()、delete()、clear()，属性size获取元素数量。
+
+```javascript
+const s = new Set(['v1','v2','v3']);
+console.log(s.size);
+s.add('v4');
+s.add('v5').add('v6');
+s.has('v1');
+s.delete('v4');
+s.clear();
+```
+
+2、顺序和迭代
+
+集合实例可以提供一个迭代器（ Iterator），能以插入顺序生成集合内容。以通过 values()、 keys()（或者 Symbol.iterator 属性，它引用 values()）取得这个迭代器： 
+
+```javascript
+const s = new Set(['v1','v2','v3']);
+console.log(s.values === s[Symbol.iterator]); // true
+console.log(s.keys === s[Symbol.iterator]); // true
+for (let value of s.values()) {
+    console.log(value);
+}
+for (let value of s[Symbol.iterator]()) {
+    console.log(value);
+}
+for (let value of s.keys()) {
+    console.log(value);
+}
+// 拓展操作，集合转数组
+console.log([...s]); // ['v1', 'v2', 'v3']
+```
+
+集合的 entries()方法返回一个迭代器，可以按照插入顺序产生包含两个元素的数组，这两个元素是集合中每个值的重复出现：  
+
+```javascript
+const s = new Set(['v1','v2','v3']);
+for (let pair of s.entries()) {
+    console.log(pair);
+}
+// ["v1", "v1"]
+// ["v2", "v2"]
+// ["v3", "v3"]
+```
+
+回调方式，调用集合的 forEach()方法并传入回调  ：
+
+```javascript
+const s = new Set(['v1','v2','v3']);
+s.forEach((val, dupVal) => console.log(`${val} -> ${dupVal}`));
+// v1 -> v1
+// v2 -> v2
+// v3 -> v3
+```
+
+其元素不能被修改（如果元素是对象，那么可以修改对象的属性），只能删除。
+
+集合操作的定义：P177
+
+### WeakSet
+
+1、初始化：
+
+```javascript
+const ws = new WeakSet();
+const o1 = {id:1},o2 = {id:2},o3 = {id:3};
+const ws1 = new WeakSet([o1,o2,o3]);
+
+```
+
+add()    has()  delete()  ，没有clear()。
+
+弱值（无引用时被回收）、不可迭代。
+
+弱引用集合使用示例：（）
+
+```javascript
+const disabledElements = new Set();
+const loginButton = document.querySelector('#login');
+// 通过加入对应集合，给这个节点打上“禁用”标签
+disabledElements.add(loginButton);
+```
+
+```javascript
+const disabledElements = new WeakSet();
+const loginButton = document.querySelector('#login');
+// 通过加入对应集合，给这个节点打上“禁用”标签
+disabledElements.add(loginButton);
+```
+
+当WeakSet中任何元素从DOM中删除了，该元素就可以被垃圾回收了。
+
+
+
+### 迭代与拓展操作
+
+Map、Set、定型数组、Array有默认迭代器，因此可以使用for-of和拓展运算符（...）。
+
+# 迭代器和生成器
+
+迭代：按照顺序反复多次执行一段程序，通常会有明确的终止条件。循环是迭代的基础，for循环计算是一种最简单的迭代。
+
+## 迭代器模式
+
+
+
+## 生成器
+
+
+
+# 函数
+
+
+
+# 期约和异步函数
+
+
+
+
+
+# 面向对象编程
+
+
+
+# 代理和反射
+
+
 
 # Document Object Model
 
@@ -3124,8 +3820,6 @@ function animate(obj, target,callback){
 ## 常用开发框架
 
 
-
-# 变量、作用域、内存
 
 
 

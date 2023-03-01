@@ -13,7 +13,7 @@ JavaScript：运行在客户端（浏览器）的编程语言，实现人机交�
 
 ![](img/JavaScript.png)
 
-# ECMAScript-语法标准
+# 语言基础
 
 JavaScript（网景公司）、Jscript（微软），JavaScript最流行。ECMAScript规定了JS编程的基本语法和基础核心知识，是所有厂商共同遵守的一套JS语法工业标准。
 
@@ -151,41 +151,6 @@ alert(a); // 出错，a只在函数作用域内有效
 1. 变量、函数的命名尽量“见名知义”。
 2. 变量的名称一般用名词。
 3. 函数的名称一般用动词。
-
-### 变量、作用域、内存
-
-原始值和引用值：
-
-- 原始值——最基本的数据，6种原始值：Undefined、 Null、 Boolean、 Number、 String 和 Symbol  。
-- 引用值——对象，JavaScript不允许直接访问内存位置，操作对象时实际操作的是对象的引用而非对象本身，通过引用间接操作对象本身。
-
-动态属性：对于引用值而言，可以随时添加、修改和删除其属性和方法。
-
- 值的复制：
-
-- 原始值赋予另一个变量，是复制一份给这个变量。
-- 引用值从一个变量赋给另一个变量，复制的是指针，这样两个变量都指向同一个对象。
-
-函数参数传递：ECMAScript 中函数的参数就是局部变量。J函数参数传参中只有值传递，没有引用传递，都是将值拷贝一份给函数的参数，对象传入也是拷贝一份指针。
-
-类型判断：
-
-typeof用于判断字符串、数值、布尔值或 undefined 这些类型好使，判断null那返回的就是object。
-
-对应判断对象类型的，使用instanceof：
-
-```javascript
-let obj = new Object();
-console.log(obj instanceof Object);  // true
-```
-
-上下文和作用域：
-
-
-
-链接回收：
-
-
 
 
 
@@ -461,7 +426,7 @@ let obj = new Object();
 
 Object实例的属性和方法：（任何对象都有的）
 
-1. constructor，构造器，是用于创建当前对象的一个函数，例如Object()函数。
+1. constructor，是用于创建当前对象的一个函数，例如Object()函数。
 2. hasOwnProperty(propertyName)：用于判断当前对象实例（不是原型）上是否存在给定的属性。要检查的属性名必须是字符串（如 o.hasOwnProperty("name")）或符号。isPrototypeOf(object)：用于判断当前对象是否为另一个对象的原型。（第 8 章将详细介绍原型。）
 3. propertyIsEnumerable(propertyName)：用于判断给定的属性是否可以使用 for-in 语句枚举。与 hasOwnProperty()一样，属性名必须是字符串。
 4. toLocaleString()：返回对象的字符串表示，该字符串反映对象所在的本地化执行环境。toString()：返回对象的字符串表示。
@@ -680,11 +645,25 @@ array.length = 10; // 更改数组长度来扩容，扩出来的位置默认是 
    2. array.shift()——删除第一个元素。
    3. array.splice(开始下标，操作个数)——从指定下标元素开始删除多个元素。
 
+## 类型总结
 
+简单数据类型（也叫基本数据类型）：string、number、boolean、undefined、null。
 
-## 函数入门
+- 基本数据类型在存储时变量中存储的是值本身，因此叫做值类型。
+- 基本数据类型中特殊的是，null是返回一个空对象（object类型）（null是空对象的引用）。
+
+复杂数据类型（也叫引用类型）：
+
+- 通过new关键字创建的对象（系统对象、自定义对象），如Object、Array、Date等。
+- 存储变量时存储的仅仅是地址（引用）。
+
+![](img/堆和栈.png)
+
+# 函数
 
 执行特定任务的代码块。
+
+## 函数使用
 
 ### 函数声明和调用
 
@@ -764,41 +743,6 @@ function show(v1,v2){
 
 
 
-### 域
-
-**作用域：**限定变量名的可用性范围
-
-1. 全局作用域：整个script标签、或者一个单独的js文件。
-2. 局部作用域（函数作用域）：在函数内部就是局部作用域，这个变量只在函数内部起作用。
-3. es6新增块级作用域，就是`{ }`括起来的部分。
-
-**全局、局部变量：**
-
-1. 全局变量：
-   - 全局作用域下的变量，局部作用域（函数内部）外声明的变量。
-   - 【特殊】：在函数内部或块内没有声明，但直接赋值的变量将是全局变量（函数需要执行才会初始化）。
-   - 浏览器关闭时销毁，比较消耗资源。
-2. 局部变量：
-   - 局部作用域（函数内部）的变量，只能在其声明处的函数内部使用。
-   - 程序执行时创建，执行完毕就销毁，更加节约资源。
-
-**作用域链：**
-
-- 如果函数内部还有函数，就在这个作用域中又产生一个作用域。
-- 内部函数可以访问外部函数变量，是根据链式查找来决定哪些数据能被内部函数访问，这种结构称作作用域链。
-
-```js
-function f1(){
-    var num = 11;
-    function f2(){
-        alert(num);
-    }
-    f2();
-}
-var num = 33;
-f1(); // 11
-```
-
 ### 匿名函数
 
 函数表达式——将匿名函数赋值给一个变量，并通过变量名称来调用函数。Web API中大量使用。
@@ -852,9 +796,13 @@ function fn(x = 0, y = 0){
 }
 ```
 
+## 箭头函数
 
 
-## 预解析
+
+
+
+# 预解析
 
 问题引出：
 
@@ -944,7 +892,9 @@ console.log(foo); // 输出 '此时会覆盖它-那个与我同名的函数'
 
 同时声明多个函数名相同的函数，先声明的会被后声明的覆盖。
 
-## 对象入门
+# 面向对象编程
+
+## 使用对象
 
 ### 对象声明与调用
 
@@ -1062,7 +1012,7 @@ for (const stuKey in stu) {
 
 
 
-### 内置对象
+## built-in objects
 
 JavaScript的三种对象：自定义对象、内置对象、浏览器对象。
 
@@ -1070,7 +1020,7 @@ JavaScript的三种对象：自定义对象、内置对象、浏览器对象。
 
 MDN文档查看：[JavaScript 标准内置对象 - JavaScript | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects)。
 
-#### **Math对象：**
+### Math
 
 [Math - JavaScript | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Math)
 
@@ -1088,7 +1038,7 @@ function getRandom(min,max) {
 
 
 
-#### **Date对象：**
+### Date
 
 [Date - JavaScript | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Date)
 
@@ -1134,7 +1084,7 @@ function getRandom(min,max) {
 </script>   
 ```
 
-#### **数组对象：**
+### Array
 
 ```html
 <script>
@@ -1220,7 +1170,7 @@ function unique(arr){
 
 ![](img/arrM.png)
 
-#### 字符串对象：
+### String
 
 **基本包装类型：**
 
@@ -1319,27 +1269,248 @@ JavaScript提供了三个特殊的引用类型：String、Boolean、Number。基
 
 
 
-## 类型总结
+# 变量、作用域、内存
 
-简单数据类型（也叫基本数据类型）：string、number、boolean、undefined、null。
+原始值和引用值：
 
-- 基本数据类型在存储时变量中存储的是值本身，因此叫做值类型。
-- 基本数据类型中特殊的是，null是返回一个空对象（object类型）（null是空对象的引用）。
+- 原始值——最基本的数据，6种原始值：Undefined、 Null、 Boolean、 Number、 String 和 Symbol  。
+- 引用值——对象，JavaScript不允许直接访问内存位置，操作对象时实际操作的是对象的引用而非对象本身，通过引用间接操作对象本身。
 
-复杂数据类型（也叫引用类型）：
+动态属性：对于引用值而言，可以随时添加、修改和删除其属性和方法。
 
-- 通过new关键字创建的对象（系统对象、自定义对象），如Object、Array、Date等。
-- 存储变量时存储的仅仅是地址（引用）。
+ 值的复制：
 
-![](img/堆和栈.png)
+- 原始值赋予另一个变量，是复制一份给这个变量。
+- 引用值从一个变量赋给另一个变量，复制的是指针，这样两个变量都指向同一个对象。
+
+函数参数传递：ECMAScript 中函数的参数就是局部变量。J函数参数传参中只有值传递，没有引用传递，都是将值拷贝一份给函数的参数，对象传入也是拷贝一份指针。
+
+类型判断：
+
+typeof用于判断字符串、数值、布尔值或 undefined 这些类型好使，判断null那返回的就是object。
+
+对应判断对象类型的，使用instanceof：
+
+```javascript
+let obj = new Object();
+console.log(obj instanceof Object);  // true
+```
+
+上下文和作用域：
+
+链接回收：
 
 
 
-# 引用类型
+作用域：限定变量名的可用性范围
 
-Date、Math见对象入门。包装类见原始数据类型。
+1. 全局作用域：整个script标签、或者一个单独的js文件。
+2. 局部作用域（函数作用域）：在函数内部就是局部作用域，这个变量只在函数内部起作用。
+3. es6新增块级作用域，就是`{ }`括起来的部分。
 
-## RegExp类型
+全局、局部变量：
+
+1. 全局变量：
+   - 全局作用域下的变量，局部作用域（函数内部）外声明的变量。
+   - 【特殊】：在函数内部或块内没有声明，但直接赋值的变量将是全局变量（函数需要执行才会初始化）。
+   - 浏览器关闭时销毁，比较消耗资源。
+2. 局部变量：
+   - 局部作用域（函数内部）的变量，只能在其声明处的函数内部使用。
+   - 程序执行时创建，执行完毕就销毁，更加节约资源。
+
+作用域链：
+
+- 如果函数内部还有函数，就在这个作用域中又产生一个作用域。
+- 内部函数可以访问外部函数变量，是根据链式查找来决定哪些数据能被内部函数访问，这种结构称作作用域链。
+
+```js
+function f1(){
+    var num = 11;
+    function f2(){
+        alert(num);
+    }
+    f2();
+}
+var num = 33;
+f1(); // 11
+```
+
+
+
+# 标准库
+
+JavaScript的三种对象：自定义对象、内置对象、浏览器对象。
+
+内置对象：JavaScript自带的对象，对象含有常用的或基本而必要功能（属性和方法），例如Math、Date、Array、String、Object、Global。
+
+MDN文档查看：[JavaScript 标准内置对象 - JavaScript | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects)。
+
+## Math对象
+
+[Math - JavaScript | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Math)
+
+![](img/Math.png)
+
+- 传入参数，并返回值。
+- 最大、最小值传入数组。
+
+```js
+// min - max 的随机函数
+function getRandom(min,max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+```
+
+
+
+## Date对象
+
+[Date - JavaScript | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Date)
+
+内置的Date()构造函数，创建其对象来调用对象的方法，可以获取时间值。
+
+![](img/dateformat.png)
+
+获取时间戳（从1970年1月1日（世界标准世界）起的毫秒数）的四种方式：
+
+```html
+<script type="text/javascript"> 
+    var date = new Date();
+    // 方法1
+    alert(date.valueOf());
+    // 方法2
+    alert(date.getTime());
+    // 方法3 最常用的方法
+    var date1 = +new Date();
+    alert(date1);
+    // 方法4 H5 新增
+    alert(Date.now());
+</script>
+```
+
+```html
+<script type="text/javascript">
+    function countDown(time){
+        var nowTime = +new Date();
+        var inputTime = +new Date(time);
+        var times = (inputTime - nowTime) / 1000;
+        var d = parseInt(times / 60 / 60 / 24);
+        d = d < 10 ? '0' + d : d;
+        var h = parseInt(times / 60 / 60 % 24); 
+        h = h < 10 ? '0' + h : h;
+        var m = parseInt(times / 60 % 60);
+        m = m < 10 ? '0' + m : m;
+        var s = parseInt(times % 60);
+        s = s < 10 ? '0' + s : s;
+        return d + '天' + h + '时' + m + '分' + s + '秒';
+    }
+    var t = countDown('2022-1-1 00:00:00');
+    console.log(t); 
+</script>   
+```
+
+
+
+
+
+## String对象
+
+**基本包装类型：**
+
+JavaScript提供了三个特殊的引用类型：String、Boolean、Number。基本包装类型就是把简单数据类型包装为复杂数据类型，这样基本数据类型就有了属性和方法。包装的执行过程如下：
+
+```html
+<script type="text/javascript">
+    // 该基本数据类型会包装成复杂数据类型
+    var str = 'string';
+    alert(str.length);
+    // 实际内部执行如下
+    var temp = new String('string'); // 1.创建临时变量
+    str = temp; // 2.赋给str
+    temp = null; // 3.销毁
+</script>
+```
+
+**字符串的不可变：**字符串改变时并不是原来的值发生了改变，而是一个新字符串的引用赋予了该字符串，只是字符串的引用地址发生了改变。
+
+![](img/str.png)
+
+开始的位置是可选的，lastIndexOf也一样。
+
+```html
+<script type="text/javascript">
+    function indexs(arr,str){
+        var indexArray = [];
+        var flag = arr.indexOf(str);
+        while( flag !== -1){
+            indexArray.push(flag);
+            flag = arr.indexOf(str,flag + 1);
+        }
+        return indexArray;
+    }
+    var a  = indexs([1,1,1,3,4,6,1,3],1);
+    alert(a);
+</script>
+```
+
+**根据位置返回字符：**
+
+![](img/str_return.png)
+
+获得重复次数最多的字符：（将字符作为属性放进对象，遍历字符并与对象中属性进行匹配，得到各个字符的数量，最后再遍历对象取出值最大的属性）
+
+```html
+<script type="text/javascript">
+    // 出现次数最多的字符
+    function maxShow(str){
+        var obj = {};
+        for(var i = 0; i < str.length; i++){
+            var chars = str.charAt(i);
+            if(obj[chars]){
+                obj[chars]++;
+            }else{
+                obj[chars] = 1;
+            }
+        }
+        var max = 0;
+        var ch = '';
+        for (var key in obj) {
+            if(obj[key] > max){
+                max = obj[key];
+                ch = key;
+            }
+        }
+        return ch;
+    }
+    alert(maxShow('asdffff'));
+</script>
+```
+
+**字符串拼接及截取：**
+
+![](img/str_rel.png)
+
+**替换字符：**
+
+```html
+<script>
+    var str = 'string';
+    // 只会替换首次出现的那个
+    alert(str.replace('s','a'));
+    // 字符转换为数组
+    var s = '1,2,3,4,5,6';
+    console.log(s.split(',')); // [1,2,3,4,5,6]
+    // 字符大小写转换
+    alert(str.toUpperCase()); // 转换为大写
+    alert('AaA'.toLowerCase()); // 转换为小写
+</script>
+```
+
+![](img/e1.png)
+
+
+
+## RegExp对象
 
 正则表达式的应用场景有哪些？
 
@@ -1372,7 +1543,7 @@ let pattern2 = new RegExp("[bc]at", "i");
 
 ## Global对象
 
-Global是一个单例内置对象，在全局作用域中定义的变量和函数都会变成 Global 对象的属性。isNaN()、 isFinite()、 parseInt()和 parseFloat()等，实际上都是 Global 对象的方法 。其他的Global对象方法如下。
+Global是一个单例内置对象（另一个是Math），在全局作用域中定义的变量和函数都会变成 Global 对象的属性。isNaN()、 isFinite()、 parseInt()和 parseFloat()等，实际上都是 Global 对象的方法 。其他的Global对象方法如下。
 
 1、URI编码方法：使用 URI 编码方法来编码 URI 可以让浏览器能够理解它们，同时又以特殊的 UTF-8 编码替换掉所有无效字符。  
 
@@ -1420,7 +1591,7 @@ let global = function() {
 
 ## 集合引用类型
 
-### Object
+### Object对象
 
 见对象入门。
 
@@ -1428,7 +1599,7 @@ let global = function() {
 
 使用字面量创建对象并不会调用Object的构造器。
 
-### Array
+### Array对象
 
 JavaScript中的数组：有序的、可存储任意数据类型数据、数组长度是动态的。
 
@@ -1530,6 +1701,11 @@ console.log(arr.toLocaleString()); // red,green,blue
 调用数组的toLocaleString()时，会调用数组的每个值的toLocaleString()。
 
 所以对象都有toLocaleString()、 toString()和 valueOf()方法  。
+
+数组转换为字符串：
+
+- `toString()`方法：转换成的字符使用逗号分隔每个元素。
+- `join()`方法：默认是使用逗号分隔，可以设置其他符号来分隔（`join('-')`使用-来分隔）。
 
 8、栈方法：push()、pop()，以实现类似栈的行为
 
@@ -1694,7 +1870,7 @@ alert(sum); // 15
 
 
 
-### Map
+### Map对象
 
 1、Map集合的创建和初始化：（可以使用任何类型作为键）
 
@@ -1809,7 +1985,7 @@ Object与Map：
 
 
 
-### WeakMap
+### WeakMap对象
 
 ES6新增的类型，WeakMap 中的“weak”（弱），描述的是 JavaScript 垃圾回收程序对待“弱映射”中键的方式。  
 
@@ -1839,7 +2015,7 @@ WeakMap的使用：私有变量和DOM节点元数据。（先跳过）
 
 
 
-### Set
+### Set对象
 
 单列集合，可以包含如何数据类型作为值。
 
@@ -1917,7 +2093,7 @@ s.forEach((val, dupVal) => console.log(`${val} -> ${dupVal}`));
 
 集合操作的定义：P177
 
-### WeakSet
+### WeakSet对象
 
 1、初始化：
 
@@ -1968,17 +2144,13 @@ Map、Set、定型数组、Array有默认迭代器，因此可以使用for-of和
 
 
 
-# 函数
+
 
 
 
 # 期约和异步函数
 
 
-
-
-
-# 面向对象编程
 
 
 

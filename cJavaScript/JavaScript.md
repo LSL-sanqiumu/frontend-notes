@@ -685,34 +685,39 @@ show();
 函数命名规范：
 
 1. 小驼峰，前缀应该为动词。
-2. 常用动词：
-   1. can：判断是否可执行某个动作。
-   2. has：判断是否含某个值。
-   3. is：判断是否是某个值。
-   4. get：获取某个值。
-   5. set：设置某个值。
-   6. load：加载某些数据。
+2. 常用动词：can：判断是否可执行某个动作。has：判断是否含某个值。is：判断是否是某个值。get：获取某个值。set：设置某个值。load：加载某些数据。
+
+关于函数名：函数名代表函数的一个指针，而函数的name属性则是代表一个指向函数的变量或函数名。
+
+```javascript
+function f(){}   // f
+let f1 = function(){}   // f1
+console.log(function(){}.name);   // 空字符串
+console.log((new Function()).name); // anonymous
+```
+
+
 
 ### 函数的参数
 
-参数：函数的形参个数无限制，传入的实参也不要求全部都和形参对应上，形参默认值为undefined。
+参数个数：函数的形参个数无限制，传入的实参也不要求全部都和形参对应上。实际上调用函数时函数总是接收一个数组，所以参数个数没什么限制，可有可无，JavaScript中的函数也就没有重载一说，只是后定义的同名函数会覆盖前面定义的函数。
 
-开发中尽量保证形参和实参个数一致。
+传入的参数可以是对象、函数等。
+
+形参默认值：形参默认值为undefined。（ES6后，可自定义参数值）
 
 ```js
 function fun(参数列表) {
     函数体
 }
-function show(v1,v2,v3){
+function show(v1,v2,v3){   // 开发中尽量保证形参和实参个数一致。
     alert("这是一个函数");
     console.log(v1 + v2 + v3);
 }
 show(22,33,44); // 传入实参
 ```
 
-**使用`arguments`获取参数：**
-
-当不确定传入多少个参数时，使用arguments来获取参数。JavaScript中，arguments实际上是当前函数的一个内置对象，所有的函数都有的，其存储了要传递的所有实参。
+使用`arguments`获取参数：当不确定传入多少个参数时，使用arguments来获取参数。JavaScript中，arguments实际上是当前函数的一个内置对象，所有的函数都有的，其存储了要传递的所有实参。
 
 ```js
 function testArg(){
@@ -723,38 +728,151 @@ function testArg(){
 testArg(1,2,3);
 ```
 
-arguments是一个伪数组，只有函数才有arguments（函数表达式也有）：
+arguments是一个伪数组，只有函数才有arguments（函数表达式也有，但箭头函数定义的函数表达式没有）：
 
 - 具有数据的.length属性。
 - 按照索引的方式进行值的存储。
 - 没有一些真正数组的方法，例如pop()、push()方法等。
 - 可以通过数组的方式对里面存储的实参进行遍历。
 
+ES6新特性——设置参数默认值：
+
+```javascript
+// 没有传入值或传入undefined时，对应形参位置上的默认值就会起作用，默认值在函数调用时才会起作用
+function test(name = '小丑',age  = 99){
+    console.log(`${name}:${age}岁`);
+}
+test();
+test('小花丑',96);
+test(undefined,88);
+//不会影响到arguments，arguments中存的值是传入的值
+```
+
+默认参数值也可以是对象、函数返回值：
+
+```javascript
+function getVal(){
+    return 100;
+}
+function test(name = '小丑',age  = getVal()){
+    console.log(`${name}:${age}岁`);
+}
+test();
+```
+
+函数的默认参数只有在函数被调用时才会求值，不会在函数定义时求值。计算默认值的函数只有在调用函数但未传相应参数时才会被调用。
+箭头函数同样也可以这样使用默认参数，只不过在只有一个参数时也得加上()了。
+
+```javascript
+// 后定义的可以调用前定义的，遵从暂时性死区
+function test(name = '小丑', elseName  = name){
+    console.log(`${name}:花${elseName}`);
+}
+// 类似于：
+function test(){
+    let name = '小丑',elseName  = name;
+    console.log(`${name}:花${elseName}`);
+}
+```
+
+ES6新特性——拓展参数与收集参数：
+
+拓展操作符`...`：对可迭代对象应用扩展操作符，并将其作为一个参数传入，可以将可迭代对象拆分，并将迭代返回的每个值单独传入。
+
+```javascript
+let values = [1, 2, 3, 4];
+function getSum() {
+    let sum = 0;
+    for (let i = 0; i < arguments.length; ++i) {
+        sum += arguments[i];
+    }
+    return sum;
+}
+// 将`...values`传入，即像(1,2,3,4)一样
+console.log(getSum(...values));
+// 不影响其他值传入
+console.log(getSum(-1, ...values)); // 9
+console.log(getSum(...values, 5)); // 15
+console.log(getSum(-1, ...values, 5)); // 14
+console.log(getSum(...values, ...[5,6,7])); // 28
+```
+
+使用默认参数时，也可使用拓展操作符传入参数。
+
+```javascript
+function getProduct(a, b, c = 1) {
+    return a * b * c;
+}
+console.log(getProduct(...[1,2])); // 2
+```
+
+拓展运算符也可以用来收集参数：（箭头函数也可以使用拓展操作符）
+
+```javascript
+function sum(...values) {
+    return values.reduce((x, y) => x + y, 0);
+}
+let n = sum(1,2,3,4,5,6);  //  ...values ===> values = [1,2,3,4,5,6]
+console.log(n);
+```
+
+### 函数传参赋值技巧
+
+如果没有值就赋值。
+
+```js
+/** 防止无参数传入时出错 **/
+// 方式一
+function fn(x, y){
+    x = x || 0;
+    y = y || 0;
+}
+// 方式二：使用参数默认值，没有传入参数时就是 x=0，y=0
+function fn(x = 0, y = 0){
+	
+}
+```
+
+
+
 ### 函数的返回值
 
-返回值：直接return就好。返回多个值：返回数组。
+返回值：直接return就好。返回多个值：返回数组就好。可以返回函数。
 
 ```js
 function show(v1,v2){
     return v1 + v2;  // return后，函数即立即结束
 }
-// 函数中return后不接数据或没有显式声明return时返回的是undefined
+function f(){
+    return function(){};  // 返回一个函数
+}
+f();
+```
+
+如果函数中return后不接数据或没有显式声明return时返回的是undefined：
+
+```javascript
+function fr(){
+    return;
+}
 ```
 
 
 
-### 匿名函数
+### 函数表达式
 
 函数表达式——将匿名函数赋值给一个变量，并通过变量名称来调用函数。Web API中大量使用。
 
 ```js
-// 函数表达式
+// 函数表达式，这样创建的函数也叫匿名函数
 let fun = function (){
     // 函数体
-}
+};
 // 调用
 fun();
 ```
+
+
 
 ### 立即执行函数
 
@@ -779,28 +897,220 @@ fun();
 }(1,2,3));
 ```
 
-### 函数传参赋值技巧
+立即调用的匿名函数又被称作立即调用的函数表达式（会被解析成函数表达式）。
 
-如果没有值就赋值。
 
-```js
-/** 防止无参数传入时出错 **/
-// 方式一
-function fn(x, y){
-    x = x || 0;
-    y = y || 0;
-}
-// 方式二：没有传入参数时就是 x=0，y=0
-function fn(x = 0, y = 0){
-	
+
+## 函数内部
+
+1、arguments：
+
+该对象只有`function xxx() {}`形式定义的函数才有，是一个类数组对象，包含调用函数时传入的所有参数 。
+
+arguments对象的callee 属性，是一个指向 arguments 对象所在函数的指针。  
+
+```javascript
+// 使用递归实现阶乘
+function factorial(num) {
+    if (num <= 1) {
+        return 1;
+    } else {
+        // 这里可以这样：return num * arguments.callee(num - 1);
+        // 也就是实现了函数名称与函数逻辑的解耦
+        return num * factorial(num - 1);
+    }
 }
 ```
 
+2、this：
+
+- 全局作用域下的函数中的this指向window对象。
+- 对象方法中的this指向当前对象。
+- 全局作用域下的箭头函数中this执行window对象。
+- 构造函数中的this指向当前对象。
+
+```javascript
+function King() {
+    this.royaltyName = 'Henry';
+    // this 指向 King 的实例
+    // 箭头函数会保留定义该函数时的上下文，因此此时指向的还是King实例
+    setTimeout(() => console.log(this.royaltyName), 1000);
+}
+function Queen() {
+    this.royaltyName = 'Elizabeth';
+    // this 指向 window 对象
+    setTimeout(function() { console.log(this.royaltyName); }, 1000);
+}
+```
+
+3、caller：
+
+函数对象的caller属性，指调用当前函数的函数。
+
+```javascript
+function outer() {
+    inner();
+}
+function inner() {
+    // inner.caller指调用inner函数的函数  ===>  outer()
+    console.log(inner.caller);
+    // console.log(arguments.callee.caller); // 降低耦合写法
+}
+outer();
+```
+
+4、new.target：
+
+ECMAScript 中的函数始终可以作为构造函数实例化一个新对象，也可以作为普通函数被调用。
+
+ES6新增new.target属性，用于检测函数是使用new关键字调用还是正常调用。
+
+- 正常调用：new.target = undefined。
+- 使用neww关键字调用：new.target = 调用的构造函数。
+
+```javascript
+// 定义一个函数必须使用new来调用
+function King() {
+    if (!new.target) {
+        throw 'King must be instantiated using "new"'
+    }
+    console.log('King instantiated using "new"');
+}
+new King(); // King instantiated using "new"
+// 直接正常调用，则抛出错误
+King(); // Error: King must be instantiated using "new"
+```
+
+
+
+## 函数属性和方法
+
+函数中都有两个属性：
+
+1. length：保存函数定义的命名参数的个数 。
+2. prototype：保存引用类型所有实例方法的地方  。（不可枚举的，使用for-in遍历不会返回该属性）
+
+```javascript
+// 定义了num1、num2，所以该函数的length=2
+function sum(num1, num2) {
+    return num1 + num2;
+}
+```
+
+函数的两个方法：apply()和 call()  ，都会以指定的 this 值来调用函数 。
+
+```javascript
+// apply(this, Array实例或arguments)
+function sum(num1, num2) {
+    return num1 + num2;
+}
+function callSum1(num1, num2) {
+    return sum.apply(this, arguments); // 传入 arguments 对象
+}
+function callSum2(num1, num2) {
+    return sum.apply(this, [num1, num2]); // 传入数组
+}
+console.log(callSum1(10, 10)); // 20   全局作用域调用，this指向window
+console.log(callSum2(10, 10)); // 20   全局作用域调用，this指向window
+```
+
+```javascript
+// call(this, 形参列表)   作用与apply相同，不过call是以逐个形参方式传递参数
+function sum(num1, num2) {
+    return num1 + num2;
+}
+function callSum(num1, num2) {
+    return sum.call(this, num1, num2);  // 全局作用域调用callSum，this指向window
+}
+console.log(callSum(10, 10)); // 20
+```
+
+apply()和 call()  用处：控制函数调用上下文即函数体内 this值的能力。（**将任意对象设置为任意函数的作用域** ）
+
+```javascript
+window.color = 'red';
+let o = {
+    color: 'blue'
+};
+function sayColor() {
+    console.log(this.color);
+}
+sayColor(); // red
+// 第一个参数指this，传入不同对象，也就控制函数内this的指向
+sayColor.call(this); // red
+sayColor.call(window); // red
+sayColor.call(o); // blue
+```
+
+函数的bind()  方法：（ECMAScript 5 出于**将任意对象设置为任意函数的作用域**的目的而定义的一个方法）
+
+ 通过bind()方法，可以改变函数内this指向。
+
+```javascript
+window.color = 'red';
+var o = {
+    color: 'blue'
+};
+function sayColor() {
+    console.log(this.color);
+}
+// 创建一个新的函数并赋给objectSayColor，创建的新函数的this将与传给build()的对象实参绑定
+let objectSayColor = sayColor.bind(o); 
+objectSayColor(); // blue
+```
+
+
+
 ## 箭头函数
 
+箭头函数，ES6新增的一种利用胖箭头来**定义函数表达式**的能力。（定义函数表达式的一种新方式）
+
+```javascript
+let show = () => {
+    console.log('函数表达式');
+}
+// ()内是形参列表，没有形参或2个以上时需要括号，一个形参是括号可以省略
+// {}内是函数体，省略{}时只能写一个语句或表达式并且隐式返回这个语句的值
+```
+
+```javascript
+// 无效的箭头函数
+let no = (a,b)=> return a + b; // a+b为表达式，return为一个语句，不符合去除{}的要求
+```
+
+箭头函数不能使用arguments、super、new.target等，不能用作构造函数，没有prototype属性。
+
+箭头函数只能通过定义的形式来访问传入的实参。虽然没有arguments，但可以在包装函数中使用：
+
+```javascript
+function show(){
+    let s = () => {
+        console.log(arguments[0]);
+    };
+    s();
+}
+show(99);
+```
 
 
 
+## 尾调用优化
+
+ECMAScript 6 规范新增了一项内存管理优化机制，让 JavaScript 引擎在**满足条件时可以重用栈帧**。具体来说，这项优化非常适合“尾调用”，即外部函数的返回值是一个内部函数的返回值。  
+
+P307
+
+
+
+## 闭包
+
+闭包指的是那些**引用了另一个函数作用域中变量的**函数，通常是在嵌套函数中实现的。理解作用域链创建和使用的细节对理解闭包非常重要。  
+
+
+
+## 私有变量
+
+私有变量：如何定义在函数或块中的变量，都可认为是私有的。（JavaScript没有私有成员，对象的成员都是公有的）
 
 # 预解析
 
@@ -835,13 +1145,13 @@ function fn(x = 0, y = 0){
 
 JavaScript代码由浏览器中JavaScript解析器来执行，JavaScript解析器在运行js代码的时候分为——**预解析和代码执行：**
 
-1. 预解析：浏览器在执行页面代码之前，会先把页面代码都扫描一遍，并把 **声明式的函数和变量** 都提升到所在作用域的最前端，但不会提升变量赋值和函数调用操作。
+1. 预解析：浏览器在执行页面代码之前，会先把页面代码都扫描一遍，并把 **声明式的函数和变量** 都提升到源代码顶部（函数声明提升比变量声明提升更靠前），但不会提升变量赋值和函数调用操作。
 2. 代码执行：从上往下执行代码。
 
 **预解析：**
 
 1. 变量提升：把所有的**用var声明的**变量都提升到**当前作用域最前面**，但**不提升赋值操作**。
-2. 函数提升：把所有的函数声明提升到当前作用域最前面，但不提升函数调用操作。（首句使用function开始才算函数，其他只能算函数表达式。）
+2. 函数提升：把所有的函数声明提升到当前作用域最前面，但不提升函数调用操作。（首句使用function开始才算函数，其他只能算函数表达式，函数表达式只有当执行到其当前代码才会开始定义。）
 
 ```html
 <script type="text/javascript"> 
@@ -1012,264 +1322,364 @@ for (const stuKey in stu) {
 
 
 
-## built-in objects
+## 对象属性
 
-JavaScript的三种对象：自定义对象、内置对象、浏览器对象。
+### 属性类型
 
-内置对象：JavaScript自带的对象，对象含有常用的或基本而必要功能（属性和方法），例如Math、Date、Array、String、Object、Global。
+两种属性——数据属性和访问器属性。
 
-MDN文档查看：[JavaScript 标准内置对象 - JavaScript | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects)。
+**数据顺序：**
 
-### Math
+描述数据属性行为的四个特性：（为了将某个特性标识为内部特性，规范会用两个中括号把特性的名称括起来，比如[[Enumerable]]）
 
-[Math - JavaScript | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Math)
+1. `[[Configurable]]  `：默认为true，决定属性是否可通过delete删除和重定义，是否可可修改特性，是否可将其改为服务器属性。
+2. `[[Enumerable]]  `：默认为true，表示是否可通过for-in循环返回。
+3. `[[Writable]]  `：默认为true，表示是否可以被修改。
+4. `[[Value]]  `：默认为undefined，表示属性实际的值。
 
-![](img/Math.png)
+修改属性的这些特性则需要通过Object.defineProperty()方法来修改：
 
-- 传入参数，并返回值。
-- 最大、最小值传入数组。
+```javascript
+let person = {name : '小小怪'};
+Object.defineProperty(person,'name',{
+    configurable：true,
+    enumerable: true,
+    writable:false,
+    value:'大大怪的好搭档'
+});
+console.log(person.name); // 输出：大大怪的好搭档
+person.name = '大大怪';   // 不会报错，但修改不成功，严格模式下会抛出错误
+console.log(person.name); // 输出：大大怪的好搭档，因为这个属性的writable是false，所以无法修改
 
-```js
-// min - max 的随机函数
-function getRandom(min,max) {
-    return Math.floor(Math.random() * (max - min)) + min;
+/* 可通过Object.getOwnPropertyDescriptor(person,"name"); 获取person的name属性的特性的信息 */
+```
+
+需要注意的是，如果将 configurable设置为false，那么就不能再改回true了，设置了不可配置将不能修改特性了，否则将抛出错误。
+
+在调用 Object.defineProperty()时， 如果没有指定configurable、 enumerable 和 writable 的值，那么它们都默认为 false。  
+
+**访问器属性：**
+
+访问器属性包含一个获取（ getter）函数和一个设置（ setter）函数，不过这两个函数不是必需的，示例：
+
+```javascript
+let person = {name : 'getter and setter'};
+// 定义一个访问器属性 aname
+Object.defineProperty(person,"aname",{
+    get () {
+        return this.name;
+    },
+    set (newValue) {
+        this.name=newValue;
+    }
+});
+person.aname = '测试'; // 赋值时会调用set()，读值时会调用get()
+// {name: '测试'}
+console.log(person.name);
+// {enumerable: false, configurable: false, get: ƒ, set: ƒ}
+Object.getOwnPropertyDescriptor(person,"aname");
+```
+
+服务器的四个特性：[[Configurable]]、[[Enumerable]]、[[Get]]、[[Set]]
+
+- [[Get]]：获取函数，在读取属性时调用。默认值为 undefined。
+- [[Set]]：设置函数，在写入属性时调用。默认值为 undefined。
+
+
+
+### 定义多属性
+
+```javascript
+let person = {};
+// 定义一个访问器属性 aname
+Object.defineProperty(person,{
+    name : {
+        value: '好二'
+    },
+    age : {
+        value: '99'
+    },
+    gname: {
+        get(){return this.name;},
+        set(newValue){this.name=newValue;}
+    }
+});
+```
+
+一次性定义多个属性，此时没显式设置的属性特性configurable、 enumerable 和 writable  为false。
+
+
+
+### 读取属性特性
+
+Object.getOwnPropertyDescriptor()方法 ，读取到属性的特性，返回的是一个对象。示例：
+
+```javascript
+let person = {name : 'getter and setter'};
+// 定义一个访问器属性 aname
+Object.defineProperty(person,"aname",{
+    get () {
+        return this.name;
+    },
+    set (newValue) {
+        this.name=newValue;
+    }
+});
+
+// {enumerable: false, configurable: false, get: ƒ, set: ƒ}
+Object.getOwnPropertyDescriptor(person,"aname");
+// 返回多个属性的特性：{name: {…}, aname: {…}}
+console.log(Object.getOwnPropertyDescriptors(person));
+```
+
+
+
+## 合并对象
+
+合并对象：把源对象所有的本地属性一起复制到目标对象上。  
+
+ECMAScript 6 专门为合并对象提供了 Object.assign()方法：
+
+```javascript
+let dest, src, result;
+/**
+* 简单复制
+*/
+dest = {};
+src = { id: 'src' };
+// Object.assign(目标对象, 一个或多个源对象)，将一个或多个源对象和目标对象合并并返回合并后的目标对象
+result = Object.assign(dest, src);
+```
+
+注意点：
+
+1.  Object.assign()是浅复制，如果属性的值是对象，那么只会将这个对象的引用复制过去。
+2. 如果多个源对象都有相同的属性，则使用最后一个复制的值。
+3. 从源对象访问器属性取得的值，比如获取函数，会作为一个静态值赋给目标对象。换句话说，不能在两个对象间转移获取函数和设置函数。  
+4. 如果赋值期间出错，则操作会中止并退出，同时抛出错误。   
+
+```javascript
+let dest, src, result;
+dest = {};
+src = {
+    a: 'foo',
+    get b() {
+        // Object.assign()在调用这个获取函数时会抛出错误
+        throw new Error();
+    },
+    c: 'bar'
+};
+try {
+    Object.assign(dest, src);
+} catch(e) {}
+// Object.assign()没办法回滚已经完成的修改
+// 因此在抛出错误之前，目标对象上已经完成的修改会继续存在：
+console.log(dest); // { a: foo }
+```
+
+## 对象相等判断
+
+ES6新增Object.is()方法：
+
+```javascript
+console.log(Object.is({},{}));
+```
+
+要检查超过两个值，递归地利用相等性传递即可：
+```javascript
+function recursivelyCheckEqual(x, ...rest) {
+    return Object.is(x, rest[0]) &&
+        (rest.length < 2 || recursivelyCheckEqual(...rest));
+}  
+```
+
+
+
+## ES6-语法增强
+
+1、属性值简写：可以使用变量当属性，变量名就是键，变量值就是属性值
+
+```javascript
+let name = "Tom";
+let person = {name};
+// 这样也可以，代码压缩程序会在不同作用域间保留属性名
+function getPerson(name){
+    return {name};
+}
+let p = getPerson('你是谁');
+console.log(p);  // {name: '你是谁'}
+```
+
+2、可计算属性：使用变量的值当属性
+
+```javascript
+// 没有可计算属性前
+let nameKey = 'name';
+let p = {};
+p[nameKey] = 'Tom';
+// 可计算属性，会被当作JavaScript表达式求值，因此不仅可以是变量，也可以是函数调用等
+let nameKey = 'name';
+let p = {
+    [nameKey] : 'Tom'
 }
 ```
 
+3、方法名简写：
 
-
-### Date
-
-[Date - JavaScript | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Date)
-
-内置的Date()构造函数，创建其对象来调用对象的方法，可以获取时间值。
-
-![](img/dateformat.png)
-
-获取时间戳（从1970年1月1日（世界标准世界）起的毫秒数）的四种方式：
-
-```html
-<script type="text/javascript"> 
-    var date = new Date();
-    // 方法1
-    alert(date.valueOf());
-    // 方法2
-    alert(date.getTime());
-    // 方法3 最常用的方法
-    var date1 = +new Date();
-    alert(date1);
-    // 方法4 H5 新增
-    alert(Date.now());
-</script>
-```
-
-```html
-<script type="text/javascript">
-    function countDown(time){
-        var nowTime = +new Date();
-        var inputTime = +new Date(time);
-        var times = (inputTime - nowTime) / 1000;
-        var d = parseInt(times / 60 / 60 / 24);
-        d = d < 10 ? '0' + d : d;
-        var h = parseInt(times / 60 / 60 % 24); 
-        h = h < 10 ? '0' + h : h;
-        var m = parseInt(times / 60 % 60);
-        m = m < 10 ? '0' + m : m;
-        var s = parseInt(times % 60);
-        s = s < 10 ? '0' + s : s;
-        return d + '天' + h + '时' + m + '分' + s + '秒';
+```javascript
+// 不使用方法名简写，属性值为函数表达式
+let person = {
+    showName: function(name){
+        console.log(name);
     }
-    var t = countDown('2022-1-1 00:00:00');
-    console.log(t); 
-</script>   
-```
-
-### Array
-
-```html
-<script>
-    // 通过内置的Array()构造函数创建数组
-	var array = new Array(); // 创建了一个空数组
-    var array = new Array(3); // 创建了一个长度为3的数组 
-	var array = new Array(2,3); // 创建并初始化 
-</script>
-```
-
-检测是否为数组对象的两种方式：
-
-1. instanceof，`xx instanceof Array`判断是否为数组。
-
-2. H5新增方法：`Array.isArray(arr)`，传入arr并判断是否是数组，返回boolean值。
-
-
-创建的数组对象的方法：（都会改变原数组）
-
-```html
-<script type="text/javascript">
-    // 往数组末尾追加元素
-    var arr = [1,2,3];
-    var length = arr.push(4,'lsl'); // 返回的是新数组的长度
-    alert(arr); 
-    // 往数组头部追加元素 返回的也是新数组长度
-    arr.unshift('头部');
-    alert(arr);
-    // 删除数组最后一个元素并返回这个元素
-    arr.pop();
-    // 删除数组第一个元素并返回这个元素
-    arr.shift();
-</script>
-```
-
-```html
-<script type="text/javascript">
-    var arr = [1,12,3,9,5,7,10,2];
-    // 反转数组的元素
-    alert(arr.reverse());
-    // 冒泡排序
-    arr.sort(function(a,b){
-        return a - b; // 升序来进行排序，+则是降序排序
-    });
-    alert(arr);        
-</script>
-```
-
-数组索引方法（可用于判断数组中是否存在某元素）：
-
-![](img/index.png)
-
-```html
-<script type="text/javascript">
-    var arr = [1,12,2];
-    // 从前往后查找
-    // 返回该数组元素索引，只返回第一个满足条件的索引，找不到返回-1
-    var index1 = arr.indexOf(12); // 1 
-    // 从后往前查找
-    // 返回该数组元素索引，只返回第一个满足条件的索引，找不到返回-1        
-    var index2 = arr.lastindexOf(2);  // 2   
-</script>  
-```
-
-数组去重：
-
-```js
-function unique(arr){
-    var newArr = [];
-    for(var i = 0; i < arr.length; i++){
-        if(newArr.indexOf(arr[i]) === -1){
-            newArr.push(arr[i]);
-        }
+}
+// 使用方法名简写
+let person = {
+    showName(name){
+        console.log(name);
     }
-    return newArr;
 }
 ```
 
-数组转换为字符串：
+简写方法名对获取函数和设置函数也是适用的：
 
-- `toString()`方法：转换成的字符使用逗号分隔每个元素。
-- `join()`方法：默认是使用逗号分隔，可以设置其他符号来分隔（`join('-')`使用-来分隔）。
-
-![](img/arrM.png)
-
-### String
-
-**基本包装类型：**
-
-JavaScript提供了三个特殊的引用类型：String、Boolean、Number。基本包装类型就是把简单数据类型包装为复杂数据类型，这样基本数据类型就有了属性和方法。包装的执行过程如下：
-
-```html
-<script type="text/javascript">
-    // 该基本数据类型会包装成复杂数据类型
-    var str = 'string';
-    alert(str.length);
-    // 实际内部执行如下
-    var temp = new String('string'); // 1.创建临时变量
-    str = temp; // 2.赋给str
-    temp = null; // 3.销毁
-</script>
-```
-
-**字符串的不可变：**字符串改变时并不是原来的值发生了改变，而是一个新字符串的引用赋予了该字符串，只是字符串的引用地址发生了改变。
-
-![](img/str.png)
-
-开始的位置是可选的，lastIndexOf也一样。
-
-```html
-<script type="text/javascript">
-    function indexs(arr,str){
-        var indexArray = [];
-        var flag = arr.indexOf(str);
-        while( flag !== -1){
-            indexArray.push(flag);
-            flag = arr.indexOf(str,flag + 1);
-        }
-        return indexArray;
+```javascript
+let person = {
+    name_: '',
+    get name() {
+        return this.name_;
+    },
+    set name(name) {
+        this.name_ = name;
+    },
+    sayName() {
+        console.log(`My name is ${this.name_}`);
     }
-    var a  = indexs([1,1,1,3,4,6,1,3],1);
-    alert(a);
-</script>
+};  
+person.name = 'Matt';
+person.sayName(); // My name is Matt
 ```
 
-**根据位置返回字符：**
+简写方法名与可计算属性键相互兼容：  
 
-![](img/str_return.png)
-
-获得重复次数最多的字符：（将字符作为属性放进对象，遍历字符并与对象中属性进行匹配，得到各个字符的数量，最后再遍历对象取出值最大的属性）
-
-```html
-<script type="text/javascript">
-    // 出现次数最多的字符
-    function maxShow(str){
-        var obj = {};
-        for(var i = 0; i < str.length; i++){
-            var chars = str.charAt(i);
-            if(obj[chars]){
-                obj[chars]++;
-            }else{
-                obj[chars] = 1;
-            }
-        }
-        var max = 0;
-        var ch = '';
-        for (var key in obj) {
-            if(obj[key] > max){
-                max = obj[key];
-                ch = key;
-            }
-        }
-        return ch;
+```javascript
+const methodKey = 'sayName';
+let person = {
+    [methodKey](name) {
+        console.log(`My name is ${name}`);
     }
-    alert(maxShow('asdffff'));
-</script>
+}
+person.sayName('Matt'); // My name is Matt
 ```
 
-**字符串拼接及截取：**
 
-![](img/str_rel.png)
 
-**替换字符：**
+## ES6-对象解构
 
-```html
-<script>
-    var str = 'string';
-    // 只会替换首次出现的那个
-    alert(str.replace('s','a'));
-    // 字符转换为数组
-    var s = '1,2,3,4,5,6';
-    console.log(s.split(',')); // [1,2,3,4,5,6]
-    // 字符大小写转换
-    alert(str.toUpperCase()); // 转换为大写
-    alert('AaA'.toLowerCase()); // 转换为小写
-</script>
+对象解构就是使用与对象匹配的结构来实现对象属性赋值。
+
+解构赋值不一定与对象的属性匹配。赋值的时候可以忽略某些属性，而如果引用的属性不存在，该变量的值就是 undefined。
+
+```javascript
+let person = {name:'xxg',age:12};
+let {name:pName,age:pAge} = person;
+console.log(name);
+// 简写
+let {name,age} = person;
 ```
 
-![](img/e1.png)
+解构赋值的同时定义默认值，这适用于前面刚提到的引用的属性不存在于源对象中的情况：
+
+```javascript
+let person = {
+    name: 'Matt',
+    age: 27
+};
+let { name, job='Software engineer' } = person;
+console.log(name); // Matt
+console.log(job); // Software engineer
+```
+
+解构在内部使用函数 ToObject()（不能在运行时环境中直接访问）把源数据结构转换为对象。这意味着在对象解构的上下文中，原始值会被当成对象。这也意味着（根据 ToObject()的定义）， **null和 undefined 不能被解构**，否则会抛出错误。  
+
+解构并不要求变量必须在解构表达式中声明。不过，如果是给事先声明的变量赋值，则赋值表达式必须包含在一对括号中：  
+
+```javascript
+let personName, personAge;
+let person = {
+    name: 'Matt',
+    age: 27
+};
+({name: personName, age: personAge} = person);
+console.log(personName, personAge); // Matt, 27
+```
+
+1、嵌套解构：
+
+解构对于引用嵌套的属性或赋值目标没有限制。为此，可以通过解构来复制对象属性：
+
+```javascript
+let person = {
+    name: 'Matt',
+    age: 27,
+    job: {
+        title: 'Software engineer'
+    }
+};
+let personCopy = {};
+({
+    name: personCopy.name,
+    age: personCopy.age,
+    job: personCopy.job
+} = person);
+// 因为一个对象的引用被赋值给 personCopy，所以修改
+// person.job 对象的属性也会影响 personCopy
+person.job.title = 'Hacker';  
+```
+
+使用嵌套结构：
+
+```javascript
+let person = {
+    name: 'Matt',
+    age: 27,
+    job: {
+        title: 'Software engineer'
+    }
+};
+// 声明 title 变量并将 person.job.title 的值赋给它
+let { job: { title } } = person;
+console.log(title); // Software engineer
+```
+
+在外层属性没有定义的情况下不能使用嵌套解构。  
+
+2、部分解构：解构赋值时出错，已完成的解构仍然有效。
+
+3、函数列表中的解构：一个对象解构到参数列表中的一个对象形参中，对象形参中变量也就可以在函数内部使用。
+
+```javascript
+function printPerson2(foo, {name: personName, age: personAge}, bar) {
+    console.log(arguments);
+    console.log(personName, personAge);
+}
+```
+
+## 对象创建
+
+
+
+## 继承
 
 
 
 
 
-# 变量、作用域、内存
+类
+
+
+
+# 变量、作用域链、内存
 
 原始值和引用值：
 

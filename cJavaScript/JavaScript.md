@@ -299,7 +299,7 @@ console.log(null == undefined);  //  true
 
 
 
-### Symbol类型
+### ES6—Symbol类型
 
 Symbol（符号）类型，符号实例是唯一的、不可变的，其用于确保对象属性的唯一性，避免发生属性冲突。符号类型变量用于对象属性，以确保对象属性的唯一性，即只需要创建Symbol实例，并将其作为对象的新属性，就可以保证它不会覆盖已有的对象属性，无论是符号属性还是字符串属性。
 
@@ -418,7 +418,7 @@ console.log(obj[sym2]);
 
 ### Object类型
 
-类似于Java中的java.lang.Object，是所有对象的基类，其所有属性和方法在其派生类对象上也存在。
+类似于Java中的java.lang.Object，是所有对象的基类，其所有属性和方法在其派生类对象上也存在。表示各种值组成的集合。
 
 ```javascript
 let obj = new Object();
@@ -645,6 +645,76 @@ array.length = 10; // 更改数组长度来扩容，扩出来的位置默认是 
    2. array.shift()——删除第一个元素。
    3. array.splice(开始下标，操作个数)——从指定下标元素开始删除多个元素。
 
+
+
+## 变量、作用域链、内存
+
+原始值和引用值：
+
+- 原始值——最基本的数据，6种原始值：Undefined、 Null、 Boolean、 Number、 String 和 Symbol  。
+- 引用值——对象，JavaScript不允许直接访问内存位置，操作对象时实际操作的是对象的引用而非对象本身，通过引用间接操作对象本身。
+
+动态属性：对于引用值而言，可以随时添加、修改和删除其属性和方法。
+
+ 值的复制：
+
+- 原始值赋予另一个变量，是复制一份给这个变量。
+- 引用值从一个变量赋给另一个变量，复制的是指针，这样两个变量都指向同一个对象。
+
+函数参数传递：ECMAScript 中函数的参数就是局部变量。J函数参数传参中只有值传递，没有引用传递，都是将值拷贝一份给函数的参数，对象传入也是拷贝一份指针。
+
+类型判断：
+
+typeof用于判断字符串、数值、布尔值或 undefined 这些类型好使，判断null那返回的就是object。
+
+对应判断对象类型的，使用instanceof：
+
+```javascript
+let obj = new Object();
+console.log(obj instanceof Object);  // true
+```
+
+上下文和作用域：
+
+链接回收：
+
+
+
+作用域：限定变量名的可用性范围
+
+1. 全局作用域：整个script标签、或者一个单独的js文件。
+2. 局部作用域（函数作用域）：在函数内部就是局部作用域，这个变量只在函数内部起作用。
+3. es6新增块级作用域，就是`{ }`括起来的部分。
+
+全局、局部变量：
+
+1. 全局变量：
+   - 全局作用域下的变量，局部作用域（函数内部）外声明的变量。
+   - 【特殊】：在函数内部或块内没有声明，但直接赋值的变量将是全局变量（函数需要执行才会初始化）。
+   - 浏览器关闭时销毁，比较消耗资源。
+2. 局部变量：
+   - 局部作用域（函数内部）的变量，只能在其声明处的函数内部使用。
+   - 程序执行时创建，执行完毕就销毁，更加节约资源。
+
+作用域链：
+
+- 如果函数内部还有函数，就在这个作用域中又产生一个作用域。
+- 内部函数可以访问外部函数变量，是根据链式查找来决定哪些数据能被内部函数访问，这种结构称作作用域链。
+
+```js
+function f1(){
+    var num = 11;
+    function f2(){
+        alert(num);
+    }
+    f2();
+}
+var num = 33;
+f1(); // 11
+```
+
+啊
+
 ## 类型总结
 
 简单数据类型（也叫基本数据类型）：string、number、boolean、undefined、null。
@@ -661,7 +731,11 @@ array.length = 10; // 更改数组长度来扩容，扩出来的位置默认是 
 
 # 函数
 
-执行特定任务的代码块。
+执行特定任务的代码块。JavaScript中，函数是一个对象，而每个函数都是 Function类型的实例，跟其他引用类型一样也有属性和方法。
+
+因为函数是对象，所以函数名就是指向函数对象的指针，而且不一定与函数本身紧密绑定。  
+
+（函数是对象，能有自身属性、方法）
 
 ## 函数使用
 
@@ -1328,7 +1402,7 @@ for (const stuKey in stu) {
 
 两种属性——数据属性和访问器属性。
 
-**数据顺序：**
+**数据属性：**
 
 描述数据属性行为的四个特性：（为了将某个特性标识为内部特性，规范会用两个中括号把特性的名称括起来，比如[[Enumerable]]）
 
@@ -1434,7 +1508,9 @@ console.log(Object.getOwnPropertyDescriptors(person));
 
 
 
-## 合并对象
+## ES6新特性
+
+### 合并对象
 
 合并对象：把源对象所有的本地属性一起复制到目标对象上。  
 
@@ -1477,7 +1553,7 @@ try {
 console.log(dest); // { a: foo }
 ```
 
-## 对象相等判断
+### 对象相等判断
 
 ES6新增Object.is()方法：
 
@@ -1495,7 +1571,7 @@ function recursivelyCheckEqual(x, ...rest) {
 
 
 
-## ES6-语法增强
+### ES6-语法增强
 
 1、属性值简写：可以使用变量当属性，变量名就是键，变量值就是属性值
 
@@ -1574,7 +1650,7 @@ person.sayName('Matt'); // My name is Matt
 
 
 
-## ES6-对象解构
+### ES6-对象解构
 
 对象解构就是使用与对象匹配的结构来实现对象属性赋值。
 
@@ -1667,85 +1743,713 @@ function printPerson2(foo, {name: personName, age: personAge}, bar) {
 
 ## 对象创建
 
+被类取代的那些底层概念：工厂模式、构造函数模式、原型模式、对象迭代。
+
+ECMAScript 6 开始正式支持类和继承。 ES6 的类旨在完全涵盖之前规范设计的基于原型的继承模式。不过，无论从哪方面看， ES6 的类都仅仅是封装了 ES5.1 构造函数加原型继承的语法糖而已。  
+
+### 工厂模式
+
+```javascript
+// 工厂函数
+function createPerson(name, age, job) {
+    let o = new Object();
+    o.name = name;
+    o.age = age;
+    o.job = job;
+    o.sayName = function() {
+        console.log(this.name);
+    };
+    return o;
+}
+// 创建类似的特定对象，但没有解决创建的对象类型的问题，对象类型不明确
+let person1 = createPerson("Nicholas", 29, "Software Engineer");
+let person2 = createPerson("Greg", 27, "Doctor");
+```
+
+### 构造函数模式
+
+构造函数名以大写开头，构造函数是一个能创建对象的函数。
+
+```javascript
+function Person(name, age, job) {
+    this.name = name;
+    this.age = age;
+    this.job = job;
+    this.sayName = function() {
+        console.log(this.name);
+    };
+}
+let person1 = new Person("Nicholas", 29, "Software Engineer");
+let person2 = new Person("Greg", 27, "Doctor");
+let person2 = new Person;
+/* 构造函数的另外一种声明方式
+let Person = function(name, age, job) {
+    this.name = name;
+    this.age = age;
+    this.job = job;
+    this.sayName = function() {
+        console.log(this.name);
+    };
+}
+*/
+```
+
+使用构造函数new一个对象实例的过程：
+
+1. 在内存中创建一个新对象。
+2. 新对象内部的`[[Prototype]]`特性被赋值为构造函数的 prototype 属性。
+3. 构造函数内部的 this 被赋值为这个新对象（即 this 指向这个新对象）。
+4. 执行构造函数内部的代码（即给新对象添加属性）。
+5. 如果构造函数返回非空对象，则返回该对象；否则，返回刚创建的新对象。
+
+相对于工厂函数，构造函数给了对象一个类型标识。构造函数的主要问题在于，**其定义的方法会在每个实例上都创建一遍**。  
+
+### 原型模式
+
+什么是原型对象？
+
+JavaScript中，每声明一个函数js引擎都会去创建一个对象，这个对象就是函数的原型对象，简称为函数的原型。也可以这么说：浏览器为每一个函数所创建的一个对象，就是原型对象。
+
+而函数，其本身也是一个对象，其有一个属性——prototype属性，这个属性指向的就是函数的原型对象（属性值为函数的原型对象）。
+
+```javascript
+function test(){}
+console.log(test.prototype); // 通过函数对象test的属性prototype，查看函数的原型
+```
+
+原型对象的属性：
+
+- constructor属性：自动获得的，指向与之关联的构造函数 。（自定义构造函数时默认只会获得constructor属性，其它的所有方法都继承自Object）
+
+在原型对象上面定义的属性和方法可以被对象实例共享。每次调用构造函数创建一个新实例，这个实例的内部[[Prototype]]指针就会被赋值为构造函数的原型对象（通过构造函数创建的实例都有构造函数的原型）。
+
+```javascript
+function Person() {}
+// 每个函数都有的protype属性，属性值为对象，为该对象定义属性、方法就可实现对象实例间属性、方法的共享
+Person.prototype.name = "Nicholas";
+Person.prototype.age = 29;
+Person.prototype.job = "Software Engineer";
+Person.prototype.sayName = function() {
+    console.log(this.name);
+};
+let person1 = new Person();
+person1.sayName(); // "Nicholas"
+let person2 = new Person();
+person2.sayName(); // "Nicholas"
+console.log(person1.sayName == person2.sayName); // true
+```
+
+获取原型对象的方式：
+
+1. 通过构造函数的prototype属性拿到原型。
+2. 通过类的 prototype 属性。
+3. 通过对象的`__proto__`属性获取。
+4. 通过Object.getPrototypeOf()。
+
+```javascript
+function Person(){}
+console.log(Person.prototype);
+let p = new Person();
+console.log(p.__proto__);
+console.log(Object.getPrototypeOf(p));
+class Student{}
+console.log(Student.prototype);  // 通过类的prototype 属性
+```
+
+还有指定原型的方法，省略。
+
+原型用于在多个对象实例间共享属性和方法的原理——对象属性访问机制：
+
+1. 访问对象属性时，先在对象实例本身上开始寻找，匹配到属性名称后返回属性对应的值。
+2. 如果在对象实例本身上没有找到匹配的属性名称，那么就沿着指针进入原型对象查找。
+
+通过对象实例能访问原型上的属性，但不能更改这些属性，对象实例的上有与原型对象上相同的属性，那么对象实例的将遮住原型对象上的，因为属性访问机制是先去对象实例再去原型访问。
+
+判断方式：
+
+- 继承自 Object的hasOwnProperty()方法：是否是自身属性，判断属性来自原型还是来自对象实例。
+- in操作符：判断属性是原型上的还是对象实例上的。
+- 这两个结合使用可以判断属性是否存在于原型上。
+
+```javascript
+function Person(){}
+Person.prototype.desc = '我来自原型';
+let p1 = new Person();
+let p2 = new Person();
+console.log(p2.desc);  // 
+p2.desc = '我来自对象实例';
+console.log(p1.desc);  // 
+console.log(p2.desc);  // 
+console.log(p1.hasOwnProperty('desc'));  // false，desc来自原型
+console.log(p2.hasOwnProperty('desc'));  // true，desc来自对象
+/* in操作符，只要通过对象能访问到，就返回true */
+console.log('desc' in p1); // true
+console.log('desc' in p2); // true
+```
+
+属性枚举顺序：
+
+for-in 循环、 Object.keys()、 Object.getOwnPropertyNames()、 Object.getOwnPropertySymbols()以及 Object.assign()在属性枚举顺序方面有很大区别。 
+
+for-in 循环和 Object.keys()的枚举顺序是不确定的，取决于 JavaScript 引擎，可能因浏览器而异。
+
+Object.getOwnPropertyNames()、 Object.getOwnPropertySymbols()和 Object.assign()的枚举顺序是确定性的。先以升序枚举数值键然后以插入顺序枚举字符串和符号键。在对象字面量中定义的键以它们逗号分隔的顺序插入。  
+
+
+
+### 对象迭代
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## 继承
 
+继承一般包括接口继承和实现继承，只不过ECMAScript 唯一支持的继承方式只有实现继承，这种继承通过原型链来实现。
 
 
 
+### 原型链
 
-类
+构造函数、原型和实例的关系：
 
+1. 每个构造函数都有一个原型对象。prototype属性
+2. 原型有一个constructor属性指回构造函数。
+3. 实例有一个内部指针指向原型。  [[prototype]]
 
+如果原型是另一个类型的实例呢？那就意味着这个原型本身有一个内部指针指向另一个原型，相应地另一个原型也有一个指针指向另一个构造函数。这样就在实例和原型之间构造了一条原型链。这就是原型链的基本构想。  
 
-# 变量、作用域链、内存
+总结：原型不使用默认原型而设置为一个对象实例，而对象实例又有原型，依次类推可形成一条链——称这为原型链。
 
-原始值和引用值：
+1、默认原型：任何函数的默认原型是一个Object实例，这个实例有一个内部指针指向Object.prototype  。
 
-- 原始值——最基本的数据，6种原始值：Undefined、 Null、 Boolean、 Number、 String 和 Symbol  。
-- 引用值——对象，JavaScript不允许直接访问内存位置，操作对象时实际操作的是对象的引用而非对象本身，通过引用间接操作对象本身。
-
-动态属性：对于引用值而言，可以随时添加、修改和删除其属性和方法。
-
- 值的复制：
-
-- 原始值赋予另一个变量，是复制一份给这个变量。
-- 引用值从一个变量赋给另一个变量，复制的是指针，这样两个变量都指向同一个对象。
-
-函数参数传递：ECMAScript 中函数的参数就是局部变量。J函数参数传参中只有值传递，没有引用传递，都是将值拷贝一份给函数的参数，对象传入也是拷贝一份指针。
-
-类型判断：
-
-typeof用于判断字符串、数值、布尔值或 undefined 这些类型好使，判断null那返回的就是object。
-
-对应判断对象类型的，使用instanceof：
+2、原型与继承关系：确定原型与实例的关系的方法——使用instanceof操作符或isPrototypeOf()方法。
 
 ```javascript
-let obj = new Object();
-console.log(obj instanceof Object);  // true
+// 如果一个实例的原型链中出现过相应的构造函数，则 instanceof 返回 true
+console.log(instance instanceof Object);
+// 原型链中的每个原型都可以调用这个方法，只要原型链中包含这个原型，这个方法就返回 true
+console.log(Object.prototype.isPrototypeOf(instance)); // Object.prototype是否是instance实例的原型链中的原型
+console.log(SuperType.prototype.isPrototypeOf(instance)); 
+console.log(SubType.prototype.isPrototypeOf(instance)); 
 ```
 
-上下文和作用域：
+子类覆盖父类方法或增加新方法：
 
-链接回收：
-
-
-
-作用域：限定变量名的可用性范围
-
-1. 全局作用域：整个script标签、或者一个单独的js文件。
-2. 局部作用域（函数作用域）：在函数内部就是局部作用域，这个变量只在函数内部起作用。
-3. es6新增块级作用域，就是`{ }`括起来的部分。
-
-全局、局部变量：
-
-1. 全局变量：
-   - 全局作用域下的变量，局部作用域（函数内部）外声明的变量。
-   - 【特殊】：在函数内部或块内没有声明，但直接赋值的变量将是全局变量（函数需要执行才会初始化）。
-   - 浏览器关闭时销毁，比较消耗资源。
-2. 局部变量：
-   - 局部作用域（函数内部）的变量，只能在其声明处的函数内部使用。
-   - 程序执行时创建，执行完毕就销毁，更加节约资源。
-
-作用域链：
-
-- 如果函数内部还有函数，就在这个作用域中又产生一个作用域。
-- 内部函数可以访问外部函数变量，是根据链式查找来决定哪些数据能被内部函数访问，这种结构称作作用域链。
-
-```js
-function f1(){
-    var num = 11;
-    function f2(){
-        alert(num);
-    }
-    f2();
+```javascript
+function SuperType() {
+    this.property = true;
 }
-var num = 33;
-f1(); // 11
+// 为SuperType.prototype添加方法，用于返回SuperType.prototype的property
+SuperType.prototype.getSuperValue = function() {
+    return this.property;
+};
+function SubType() {
+    this.subproperty = false;
+}
+// 继承 SuperType
+SubType.prototype = new SuperType();
+// 新方法
+SubType.prototype.getSubValue = function () {
+    return this.subproperty;
+};
+// 覆盖已有的方法
+SubType.prototype.getSuperValue = function () {
+    return false;
+};
+```
+
+原型链的两个问题：（基于这些，原型链基本不会单独使用）
+
+1. 使用原型实现继承，原型由对象实例变为了另一个对象实例的原型，即实例属性变为了原型属性。
+2. 子类型在实例化时不能给父类型的构造函数传参。
+
+### 盗用构造函数
+
+盗用构造函数：
+
+- 意义：解决原型包含引用值的继承问题（无法对父类构造函数传参）。
+- 基本思路：子类构造函数中调用父类构造函数。
+- 实现方式：可以使用apply()和 call()方法以新创建的对象为上下文执行构造函数。（apply()和 call()  见“函数属性和方法”）
+
+继承的实现：
+
+```javascript
+function SuperType() {
+	this.colors = ["red", "blue", "green"];
+}
+function SubType() {
+    // 继承 SuperType 属性
+    SuperType.call(this);
+}
+let instance = new SubType();
+console.log(instance.__proto__); // 通过调用SuperType.call(this)实现了对SuperType的继承
+```
+
+如果要向父类型的构造器传递参数：
+
+```javascript
+function SubType() {
+    // 继承 SuperType 属性，传一个或多个参数
+    SuperType.call(this, 'NooN');
+}
+```
+
+为确保 SuperType 构造函数不会覆盖 SubType 定义的属性，可以在调用父类构造函数之后再给子类实例添加额外的属性：
+
+```javascript
+function SubType() {
+    SuperType.call(this, 'NooN');
+    this.age = 12;
+}
+```
+
+盗用构造函数的缺点：（继承包括继承原型的、继承对象实例的，而盗用构造函数只能继承对象实例的）
+
+1. 必须在构造函数中定义方法。
+2. 子类不能访问父类原型上定义的方法。
+
+### 组合继承
+
+组合继承：使用原型链继承原型上的属性和方法，而通过盗用构造函数继承实例属性。
+
+组合继承示例：
+
+```javascript
+function SuperType(name){
+    this.name = name;
+    this.colors = ["red", "blue", "green"];
+}
+// 为SuperType.prototype添加方法
+SuperType.prototype.sayName = function() {
+    console.log(this.name);
+};
+function SubType(name, age){
+    // 继承属性
+    SuperType.call(this, name);
+    this.age = age;
+}
+// 继承方法
+SubType.prototype = new SuperType();
+// 为SuperType.prototype添加方法
+SubType.prototype.sayAge = function() {
+    console.log(this.age);
+};
+```
+
+```javascript
+let instance1 = new SubType("Nicholas", 29);
+instance1.colors.push("black");
+console.log(instance1.colors); // "red,blue,green,black"
+instance1.sayName(); // "Nicholas";
+instance1.sayAge(); // 29
+let instance2 = new SubType("Greg", 27);
+console.log(instance2.colors); // "red,blue,green"
+instance2.sayName(); // "Greg";
+instance2.sayAge(); // 27
+```
+
+组合继承弥补了原型链和盗用构造函数的不足，是 JavaScript 中使用最多的继承模式。而且组合继承也保留了 instanceof 操作符和 isPrototypeOf()方法识别合成对象的能力。  
+
+### 原型式继承
+
+即使不自定义类型也可以通过原型实现对象之间的信息共享：
+
+```javascript
+// 通过临时构造函数创建一个原型是一个对象的对象实例，实现对o的共享，如下
+function object(o) {
+    function F() {}
+    F.prototype = o;
+    return new F();
+}
+```
+
+ECMAScript 5 ，通过增加Object.create()方法将原型式继承的概念规范化了。
+
+```javascript
+let person = {
+    name: "Nicholas",
+    friends: ["Shelby", "Court", "Van"]
+};
+let anotherPerson = Object.create(person); // cretae()方法与上面的object()方法效果相同
+// 添加属性，会遮蔽原型对象上的同名属性
+let anotherPerson = Object.create(person, {
+    name : {value:'G'}
+});
+```
+
+原型式继承非常适合不需要单独创建构造函数，但仍然需要在对象间共享信息的场合。  
+
+
+
+### 寄生式继承
+
+寄生式继承：创建一个实现继承的函数，以某种方式增强对象，然后返回这个对象。  
+
+```javascript
+function createAnother(original){
+    let clone = object(original); // 通过调用object函数创建一个新对象
+    clone.sayHi = function() { // 以某种方式增强这个对象
+        console.log("hi");
+    };
+    return clone; // 返回这个对象
+}
 ```
 
 
+
+### 寄生式组合继承
+
+组合继承其实也存在效率问题。最主要的效率问题就是父类构造函数始终会被调用两次：一次在是创建子类原型时调用，另一次是在子类构造函数中调用。  
+
+寄生式组合继承逻辑：使用寄生式继承来继承父类原型，然后将返回的新对象赋值给子类原型。  
+
+```javascript
+function inheritPrototype(subType, superType) {
+    let prototype = object(superType.prototype); // 创建对象
+    prototype.constructor = subType; // 增强对象
+    subType.prototype = prototype; // 赋值对象
+}
+```
+
+这个函数接收两个参数：子类构造函数和父类构造函数。在这个函数内部，第一步是创建父类原型的一个副本。然后，给返回的
+prototype 对象设置 constructor 属性，解决由于重写原型导致默认 constructor 丢失的问题。最后将新创建的对象赋值给子类型的原型。  
+
+寄生式组合继承可以算是引用类型继承的最佳模式。  
+
+## ES6—类
+
+### 类定义
+
+```javascript
+// 类声明
+class Person{}
+// 类表达式
+const Animal = class {};
+```
+
+类的构成：可以包含构造函数方法、实例方法、获取函数、设置函数和静态类方法 等。
+
+### 类构造函数
+
+```javascript
+class Person{
+    // 方法名 constructor 会告诉解释器在使用 new 操作符创建类的新实例时，应该调用这个函数
+    // 不定义时有默认的空参构造函数
+    // 类构造函数默认返回this对象，注意一个类只能有一个构造函数
+    //constructor (){}
+    constructor(name){
+        console.log(arguments.length);
+        this.name = name||null;
+    }
+}
+let p = new Person();
+console.log(p.name)
+```
+
+类构造函数与构造函数的主要区别：
+
+1. 调用类构造函数必须使用 new 操作符。
+2. 而普通构造函数如果不使用 new 调用，那么就会以全局的 this（通常是 window）作为内部对象。  
+
+ECMAScript 中没有正式的类这个类型。从各方面来看， ECMAScript 类就是一种特殊函数 。
+
+```javascript
+class T{}
+console.log(typeof T);  // function
+```
+
+因此类也有prototype 属性，也就是也有原型，具有与普通构造函数一样的行为  。
+
+类中定义的 constructor 方法不会被当成构造函数 ，类本身在使用 new 调用时就会被当成构造函数。
+
+类的立即实例化：
+
+```javascript
+let p = new class Person{
+    constructor(name){
+        console.log(name);
+    }
+}('路飞');
+```
+
+### 实例、原型、类成员
+
+**1、实例：**
+
+```javascript
+class Person {
+    constructor(){
+        this.name = 'men';
+        this.sayHi = function(){
+            console.log('Hi~ o(*￣▽￣*)ブ');
+        }
+    }
+}
+let p = new Person();
+p.elseName = '动物';
+p.sayHi();
+console.log(p.elseName);
+```
+
+**2、原型方法和访问器：**
+
+为了在实例间共享方法，类定义语法把在类块中定义的方法作为原型方法。 但是不能在类块中给原型添加原始值或对象作为成员数据 。
+
+```javascript
+class Person {
+    constructor(){
+        this.name = 'men';
+        this.locate = function(){
+            console.log('Hi~ o(*￣▽￣*)ブ，我在instance里');
+        }
+    }
+    // 在类块中定义的所有内容都会定义在类的原型上
+    locate() {
+        console.log('prototype');
+    }
+}
+let p = new Person();
+p.locate(); // instance
+Person.prototype.locate(); // prototype
+```
+
+类方法等同于对象属性，因此可以使用字符串、符号或计算的值作为键。
+
+```javascript
+const symbolKey = Symbol('symbolKey');
+class Person {
+    stringKey() {
+        console.log('invoked stringKey');
+    }
+    [symbolKey]() {
+        console.log('invoked symbolKey');
+    }
+    ['computed' + 'Key']() {
+        console.log('invoked computedKey');
+    }
+}
+let p = new Person();
+p.stringKey(); // invoked stringKey
+p[symbolKey](); // invoked symbolKey
+p.computedKey(); // invoked computedKey
+```
+
+类定义也支持获取和设置访问器 ：
+
+```javascript
+class Person {
+    set name(newName) {
+        this.name_ = newName;
+    }
+    get name() {
+        return this.name_;
+    }
+}
+let p = new Person();
+p.name = 'Jake';
+console.log(p.name); // Jake
+```
+
+**3、静态类方法：**（静态类方法非常适合作为实例工厂）
+
+```javascript
+class Person {
+    constructor() {
+        // 添加到 this 的所有内容都会存在于不同的实例上
+        this.locate = () => console.log('instance', this);
+    }
+    // 定义在类的原型对象上
+    locate() {
+        console.log('prototype', this);
+    }
+    // 定义在类本身上，静态方法
+    static locate() {
+        console.log('class', this);
+    }
+}
+```
+
+**4、非函数原型和类成员：**在类外部可以定义数据成员或原型对象成员
+
+```javascript
+class Person {
+    sayName() {
+        console.log(`${Person.greeting} ${this.name}`);
+    }
+}
+// 在类上定义数据成员
+Person.greeting = 'My name is';
+// 在原型上定义数据成员
+Person.prototype.name = 'Jake';
+```
+
+**5、迭代器和生成器方法：**支持在原型和类本身上定义生成器方法  
+
+```javascript
+class Person {
+    // 在原型上定义生成器方法
+    *createNicknameIterator() {
+        yield 'Jack';
+        yield 'Jake';
+        yield 'J-Dog';
+    }
+    // 在类上定义生成器方法
+    static *createJobIterator() {
+        yield 'Butcher';
+        yield 'Baker';
+        yield 'Candlestick maker';
+    }
+}
+let jobIter = Person.createJobIterator();
+console.log(jobIter.next().value); // Butcher
+console.log(jobIter.next().value); // Baker
+console.log(jobIter.next().value); // Candlestick maker
+let p = new Person();
+let nicknameIter = p.createNicknameIterator();
+console.log(nicknameIter.next().value); // Jack
+console.log(nicknameIter.next().value); // Jake
+console.log(nicknameIter.next().value); // J-Dog
+```
+
+因为支持生成器方法，所以可以通过添加一个默认的迭代器，把类实例变成可迭代对象：
+
+```javascript
+class Person {
+    constructor() {
+        this.nicknames = ['Jack', 'Jake', 'J-Dog'];
+    }
+    *[Symbol.iterator]() {
+        yield *this.nicknames.entries();
+    }
+}
+let p = new Person();
+for (let [idx, nickname] of p) {
+    console.log(nickname);
+}
+```
+
+只返回迭代器实例：
+
+```javascript
+class Person {
+    constructor() {
+        this.nicknames = ['Jack', 'Jake', 'J-Dog'];
+    }
+    [Symbol.iterator]() {
+        return this.nicknames.entries();
+    }
+}
+let p = new Person();
+for (let [idx, nickname] of p) {
+    console.log(nickname);
+}
+```
+
+
+
+### 继承
+
+类继承使用新语法，但背后依旧使用的是原型链。
+
+使用 extends 关键字，继承任何拥有[[Construct]]和原型的对象。（类、构造函数） 
+
+```javascript
+// B可以为类名或者构造函数名
+class A extends B{
+    
+}
+let A = class extends B{}
+```
+
+super关键字：引用原型，只调用父类的构造函数、静态方法等
+
+1. 只能用于类构造函数、实例方法、静态方法内部。
+2. super 只能在派生类构造函数和静态方法中使用。
+3. 单独使用时，只能用它调用构造函数，要么用它引用静态方法 。
+4. 调用 super()会调用父类构造函数，并将返回的实例赋值给 this 。
+5. 在类构造函数中，不能在调用 super()之前引用 this。  
+
+```javascript
+class Vehicle {}
+class Bus extends Vehicle {
+    constructor() {
+        console.log(this);  // 错误，不能再调用super()之前调用this
+    }
+}
+new Bus();
+```
+
+如果在派生类中显式定义了构造函数，则要么必须在其中调用 super()，要么必须在其中返回一个对象：
+
+```javascript
+class Vehicle {}
+class Car extends Vehicle {}
+class Bus extends Vehicle {
+    constructor() {
+        super();
+    }
+}
+class Van extends Vehicle {
+    constructor() {
+        return {};
+    }
+}
+console.log(new Car()); // Car {}
+console.log(new Bus()); // Bus {}
+console.log(new Van()); // {}
+```
+
+抽象基类：本身不会实例化，供继承的类
+
+```javascript
+class Vehicle {
+    constructor() {
+        console.log(new.target);
+        if (new.target === Vehicle) {
+            throw new Error('Vehicle cannot be directly instantiated');
+        }
+    }
+}
+// 派生类
+class Bus extends Vehicle {}
+new Bus(); // class Bus {}
+new Vehicle(); // class Vehicle {}
+// Error: Vehicle cannot be directly instantiated
+```
+
+通过在抽象基类构造函数中进行检查，可以要求派生类必须定义某个方法：
+
+```javascript
+// 抽象基类
+class Vehicle {
+    constructor() {
+        if (new.target === Vehicle) {
+            throw new Error('Vehicle cannot be directly instantiated');
+        }
+        if (!this.foo) {
+            throw new Error('Inheriting class must define foo()');
+        }
+        console.log('success!');
+    }
+}
+// 派生类
+class Bus extends Vehicle {
+    foo() {}
+}
+// 派生类
+class Van extends Vehicle {}
+new Bus(); // success!
+new Van(); // Error: Inheriting class must define foo()
+```
 
 # 标准库
 
@@ -2542,6 +3246,12 @@ disabledElements.add(loginButton);
 
 Map、Set、定型数组、Array有默认迭代器，因此可以使用for-of和拓展运算符（...）。
 
+
+
+# 期约和异步函数
+
+
+
 # 迭代器和生成器
 
 迭代：按照顺序反复多次执行一段程序，通常会有明确的终止条件。循环是迭代的基础，for循环计算是一种最简单的迭代。
@@ -2551,14 +3261,6 @@ Map、Set、定型数组、Array有默认迭代器，因此可以使用for-of和
 
 
 ## 生成器
-
-
-
-
-
-
-
-# 期约和异步函数
 
 
 

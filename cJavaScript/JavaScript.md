@@ -369,11 +369,12 @@ console.log(null == undefined);  //  true
 
 ### ES6—Symbol类型
 
-Symbol（符号）类型，符号实例是唯一的、不可变的，其用于确保对象属性的唯一性，避免发生属性冲突。符号类型变量用于对象属性，以确保对象属性的唯一性，即只需要创建Symbol实例，并将其作为对象的新属性，就可以保证它不会覆盖已有的对象属性，无论是符号属性还是字符串属性。
+Symbol（符号）类型是一种基本数据类型，符号实例是唯一的、不可变的，其用于确保对象属性的唯一性，避免发生属性冲突。符号类型变量用于对象属性，以确保对象属性的唯一性，即只需要创建Symbol实例，并将其作为对象的新属性，就可以保证它不会覆盖已有的对象属性，无论是符号属性还是字符串属性。
 
 1、创建符号：无论如何创建，创建的符号实例都是不相同的。
 
 ```javascript
+// 使用静态方法创建Symbol对象
 let sym1 = Symbol();
 let sym2 = Symbol('sym');
 console.log(sym2);   //  输出：Symbol(sym)
@@ -665,7 +666,7 @@ let n **= 0.5;
 
 建议使用`===`而不是`==`，使用`!==`（不全等，判断值和类型）而不是`!=`。
 
-`>=、<=、>、<`、==：
+``>=、<=、>、<、==``：
 
 1. 操作数都是数值则进行数值比较。
 2. 操作数都是字符则逐个比较字符串对应字符编码，直到比较出结果。
@@ -750,6 +751,11 @@ for (const el of [2,4,6,8,10]){
     document.write(el);
 }
 ```
+
+for-of与for-in：
+
+1. for-of：遍历对象的value、数组的值、字符串的值。（常用于遍历数组值）
+2. for-in：遍历对象的key、数组的index、字符串的index。（常用于遍历对象属性）
 
 标签语句：和Java中一样，也可以为语句添加标签。
 
@@ -1198,7 +1204,7 @@ function Queen() {
 
 3、caller：
 
-函数对象的caller属性，指调用当前函数的函数。
+函数对象的caller属性，指调用当前函数的一个函数。
 
 ```javascript
 function outer() {
@@ -1218,8 +1224,9 @@ ECMAScript 中的函数始终可以作为构造函数实例化一个新对象，
 
 ES6新增new.target属性，用于检测函数是使用new关键字调用还是正常调用。
 
-- 正常调用：new.target = undefined。
-- 使用neww关键字调用：new.target = 调用的构造函数。
+- 正常调用函数时：new.target = undefined。
+- 使用new关键字调用函数时：new.target = 所调用的这个构造函数。
+- 根据这两种情况就可以去判断是不是使用了new。
 
 ```javascript
 // 定义一个函数必须使用new来调用
@@ -1250,7 +1257,7 @@ function sum(num1, num2) {
 }
 ```
 
-函数的两个方法：apply()和 call()  ，都会以指定的 this 值来调用函数 。
+函数的方法：apply()和 call()  ，都会以指定的 this 值来调用函数，第一个参数指传入的this。
 
 ```javascript
 // apply(this, Array实例或arguments)
@@ -1297,7 +1304,7 @@ sayColor.call(o); // blue
 
 函数的bind()  方法：（ECMAScript 5 出于**将任意对象设置为任意函数的作用域**的目的而定义的一个方法）
 
- 通过bind()方法，可以改变函数内this指向。
+通过bind()方法，可以改变函数内this指向。
 
 ```javascript
 window.color = 'red';
@@ -1310,6 +1317,34 @@ function sayColor() {
 // 创建一个新的函数并赋给objectSayColor，创建的新函数的this将与传给build()的对象实参绑定
 let objectSayColor = sayColor.bind(o); 
 objectSayColor(); // blue
+```
+
+bind()方法的其他用法
+
+```javascript
+// 为函数绑定一个this作用域  
+var test = {
+    show: function() {
+      var func = function() {
+        console.log(this.str);
+      }.bind(this);
+      func();
+    },
+    str: 'hello'
+  }
+  test.show(); // hello
+// 绑定作用域并调用
+  var test = {
+    show: function() {
+      var func = function() {
+        console.log(this.str);
+      }
+      func.bind(this)();
+    },
+    str: 'hello'
+  }
+  test.show(); // hello
+
 ```
 
 
@@ -1332,6 +1367,8 @@ let no = (a,b)=> return a + b; // a+b为表达式，return为一个语句，不�
 ```
 
 箭头函数不能使用arguments、super、new.target等，不能用作构造函数，没有prototype属性。
+
+箭头函数中的this只的是其上层作用域的this。
 
 箭头函数只能通过定义的形式来访问传入的实参。虽然没有arguments，但可以在包装函数中使用：
 
